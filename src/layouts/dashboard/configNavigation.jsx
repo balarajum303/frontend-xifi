@@ -1,0 +1,67 @@
+import React, { useState, useEffect } from 'react';
+import SvgColor from 'src/components/svg-color';
+import api from 'src/components/Common/api';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
+
+const configNavigation = () => {
+  const [navConfig, setNavConfig] = useState([]);
+
+  // Function to generate an icon component
+  const icon = (name) => (
+    <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
+  );
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${500}`;
+        const response = await api.get(url);
+        const categories = response.data;
+        const mappedNavConfig = categories.map(category => ({
+          title: category.categoryName,
+          path: `/${category.categoryName}`,
+          icon: icon('ic_user'), // Example icon name generation based on title
+        }));
+
+        const newNavConfig = [
+          {
+            title: 'dashboard',
+            path: '/',
+            icon: icon('ic_analytics'),
+          },
+          {
+            title: 'Services',
+            path: '/services',
+            icon: icon('ic_blog'),
+          },
+          ...mappedNavConfig,
+          {
+            title: 'Chat Bot',
+            path: '/chat-bot',
+            icon: icon('ic_blog'),
+          },
+          {
+            title: 'Noise cancellation',
+            path: '/noise-cancellation',
+            icon: icon('ic_disabled'),
+          },
+          {
+            title: 'User Personas',
+            path: '/user-personas',
+            icon: icon('ic_notification_chat'),
+          },
+        ];
+
+        setNavConfig(newNavConfig);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  return navConfig;
+};
+
+export default configNavigation;
