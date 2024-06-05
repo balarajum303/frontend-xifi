@@ -17,24 +17,48 @@ import api from 'src/components/Common/api';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
 // ----------------------------------------------------------------------
-////////----- update----////////////
-const statusUpdateHandler = (selectedStatus) => {
 
+export default function UserTableRow({
+  selected,
+  name,
+  avatarUrl,
+  company,
+  domain,
+  role,
+  isVerified,
+  status,
+  email,
+  handleClick,
+  publicId,
+  concurrencyStamp
+}) {
+  const [open, setOpen] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+  ////////----- update----////////////
+const statusUpdateHandler = (selectedStatus) => {
+console.log("check-ststua ",publicId,concurrencyStamp)
   let statusUpdateBody = {
     status: selectedStatus
   }
   console.log(statusUpdateBody, "statusUpdateBody")
-  const url = `${CATEGORY_API.STATUS_UPDATE_CATEGORY}/${formdetails.publicId}`;
-  api.patch(url, updateCategoryBody, {
+  const url = `${CATEGORY_API.STATUS_UPDATE_CATEGORY}/${publicId}`;
+  api.patch(url, statusUpdateBody, {
     headers: {
-      'x-coreplatform-concurrencystamp': formdetails?.concurrencyStamp
+      'x-coreplatform-concurrencyStamp': concurrencyStamp
     }
   })
 
     .then(response => {
       if (response.status === 204) {
 
-        // window.location.reload()
+         window.location.reload()
       } else {
         console.error("Unexpected response:", response)
       }
@@ -51,27 +75,6 @@ const statusUpdateHandler = (selectedStatus) => {
       }
     })
 }
-export default function UserTableRow({
-  selected,
-  name,
-  avatarUrl,
-  company,
-  domain,
-  role,
-  isVerified,
-  status,
-  email,
-  handleClick,
-}) {
-  const [open, setOpen] = useState(null);
-
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
 
   return (
     <>

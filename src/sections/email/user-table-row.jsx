@@ -13,6 +13,8 @@ import IconButton from '@mui/material/IconButton';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
+import api from 'src/components/Common/api';
+import { API_BASE_URL, CATEGORY_API } from 'src/components/Common/apiConfig';
 
 // ----------------------------------------------------------------------
 
@@ -21,11 +23,17 @@ export default function UserTableRow({
   name,
   avatarUrl,
   company,
+  domain,
   role,
+  mobileNumber,
   isVerified,
   status,
+  edit,
   email,
   handleClick,
+  publicId,
+  concurrencyStamp,
+  selectedPath
 }) {
   const [open, setOpen] = useState(null);
 
@@ -36,21 +44,60 @@ export default function UserTableRow({
   const handleCloseMenu = () => {
     setOpen(null);
   };
+  ////////----- update----////////////
+const statusUpdateHandler = (selectedStatus) => {
+console.log("check-ststua ",publicId,concurrencyStamp)
+  let statusUpdateBody = {
+    status: selectedStatus
+  }
+  console.log(statusUpdateBody, "statusUpdateBody")
+  // const urls = `${API_BASE_URL}/${selectedPath}-status-update/${publicId}`
+  // console.log("urls-status-upd",urls)
+  const url = `${CATEGORY_API.STATUS_UPDATE_CATEGORY}/${publicId}`;
+
+  api.patch(url, statusUpdateBody, {
+    headers: {
+      'x-coreplatform-concurrencyStamp': concurrencyStamp
+    }
+  })
+
+    .then(response => {
+      if (response.status === 204) {
+
+         window.location.reload()
+      } else {
+        console.error("Unexpected response:", response)
+      }
+    })
+    .catch(error => {
+      if (error.response) {
+        if (error.response.status === 417) {
+          console.error("Error 417:", error)
+
+        } else if (error.response.status === 500) {
+          console.error("Error 500:", error)
+
+        }
+      }
+    })
+}
 
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        
 
-        <TableCell>{company}</TableCell>
 
+        <TableCell>{domain}</TableCell>
+        <TableCell>{email}</TableCell>
+        <TableCell>{role}</TableCell>
+        <TableCell>{mobileNumber}</TableCell>
 
 
         <TableCell>
           <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
         </TableCell>
         <TableCell>
-          <Label >{email}</Label>
+          <Label >{edit}</Label>
         </TableCell>
 
         <TableCell align="right">
@@ -70,14 +117,16 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={() => statusUpdateHandler('active')}>
           Active
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={() => statusUpdateHandler('inactive')} sx={{ color: 'error.main' }}>
           Inactive
         </MenuItem>
       </Popover>
+
+
     </>
   );
 }
@@ -90,6 +139,8 @@ UserTableRow.propTypes = {
   name: PropTypes.any,
   email: PropTypes.any,
   role: PropTypes.any,
+  mobileNumber: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
+  domain: PropTypes.string,
 };

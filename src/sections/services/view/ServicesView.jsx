@@ -35,7 +35,7 @@ export default function ServicesView() {
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);
-  const [dataFiltered, setDataFiltered] = useState([])
+  const [getData, setGetData] = useState([])
   const [maxCategoryCode, setMaxCategoryCode] = useState(0);
   const [isEdit, setisEdit] = useState(false)
 
@@ -69,7 +69,7 @@ export default function ServicesView() {
         // const categories = response.data;
         // const maxCategoryCode = Math.max(...categories.map(category => parseInt(category.categoryCode)), 0); // Find max category code
         // setMaxCategoryCode(maxCategoryCode);
-        setDataFiltered(response.data)
+        setGetData(response.data)
       })
       .catch(error => {
         console.error(error)
@@ -187,6 +187,9 @@ export default function ServicesView() {
   //   comparator: getComparator(order, orderBy),
   //   filterName,
   // });
+  const dataFiltered = getData.filter(item =>
+    item.categoryName.toLowerCase().includes(filterName.toLowerCase())
+  );
 
   const notFound = !dataFiltered.length && !!filterName;
   const [open, setOpen] = React.useState(false);
@@ -235,8 +238,8 @@ export default function ServicesView() {
 
       .then(response => {
         if (response.status === 204) {
-          setisEdit(false)
-          // window.location.reload()
+           window.location.reload()
+          
         } else {
           console.error("Unexpected response:", response)
         }
@@ -319,7 +322,8 @@ export default function ServicesView() {
                           onClick={() => handleClickOpen(row)}
                         />
                       }
-
+                      publicId={row.publicId}
+                      concurrencyStamp={row.concurrencyStamp}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />

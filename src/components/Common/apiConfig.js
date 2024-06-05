@@ -4,7 +4,9 @@ export const CATEGORY_API = {
   GET_CATEGORY:"/category",
   POST_CATEGORY:"/category",
   UPDATE_CATEGORY:"/category",
-  STATUS_UPDATE_CATEGORY:"/category-status-update"
+  STATUS_UPDATE_CATEGORY:"/category-status-update",
+  GET_USERS:"/users",
+  POST_USERS:"/users"
 
 }
 export function getToken() {

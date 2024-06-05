@@ -17,11 +17,14 @@ const configNavigation = () => {
         const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${500}`;
         const response = await api.get(url);
         const categories = response.data;
-        const mappedNavConfig = categories.map(category => ({
-          title: category.categoryName,
-          path: `/${category.categoryName}`,
-          icon: icon('ic_user'), // Example icon name generation based on title
-        }));
+        const mappedNavConfig = categories
+          .filter(category => category.status === "active") // Filter active categories
+          .map(category => ({
+            title: category.categoryName,
+            path: `/${category.categoryName}/${category.publicId}`,
+            icon: icon('ic_user'), // Example icon name generation based on title
+          }));
+
 
         const newNavConfig = [
           {
@@ -33,6 +36,11 @@ const configNavigation = () => {
             title: 'Services',
             path: '/services',
             icon: icon('ic_blog'),
+          },
+          {
+            title: 'users',
+            path: '/users',
+            icon: icon('ic_user'),
           },
           ...mappedNavConfig,
           {
