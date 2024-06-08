@@ -259,7 +259,7 @@ const handleCancel = () => {
         </MDBRow>
 
         <MDBRow style={{ width: "97.5%", marginLeft: "-23px" }}>
-          <FileUpload />
+          <FileUpload userProfileData={userProfileData} />
         </MDBRow>
 
         

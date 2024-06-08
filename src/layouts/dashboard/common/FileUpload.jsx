@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Row,
     Col,
@@ -12,23 +12,7 @@ import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { CATEGORY_API } from "src/components/Common/apiConfig";
 import api from "src/components/Common/api";
 
-const FileUpload = () => {
-    const [formdetails, setFormdetails] = useState({
-        docTypeId: "",
-        progarmId: "",
-        firstPrefrence: "",
-        academicYear: "",
-        needToProduce: "",
-        needToProduceSemwiseMc: "",
-        isMarksCard: "",
-        isConsolidatedMarks: "",
-        isSemesterWise: "",
-        isIncludeLanguage: "",
-        isPreviousExam: "",
-        isExamReq: "",
-    });
-
-    const [show, setShow] = useState(false);
+const FileUpload = ({ userProfileData }) => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [formErrors, setFormErrors] = useState({ photo: "", voice: "" });
@@ -36,25 +20,22 @@ const FileUpload = () => {
         photo: null,
         voice: null
     });
+    const [uploadedFiles, setUploadedFiles] = useState({
+        photoUrl: "",
+        voiceUrl: ""
+    });
 
     const handleFileUpload = (e, fileType) => {
         const uploadedFile = e.target.files[0];
         setFiles(prevFiles => ({ ...prevFiles, [fileType]: uploadedFile }));
+        createFileUpload(fileType, uploadedFile);
     };
 
-    useEffect(() => {
-        const successMessage = localStorage.getItem("successMessage");
-        if (successMessage) {
-            setSuccessMessage(successMessage);
-            localStorage.removeItem("successMessage");
-        }
-    }, []);
-
-    const createFileUpload = (fileType) => {
+    const createFileUpload = (fileType, file) => {
         const errors = {};
         setErrorMessage("");
 
-        if (!files[fileType]) {
+        if (!file) {
             errors[fileType] = `Please upload the ${fileType} file.`;
         }
 
@@ -67,56 +48,94 @@ const FileUpload = () => {
         setFormErrors({ photo: "", voice: "" });
 
         const formData = new FormData();
-        formData.append(fileType, files[fileType]);
-
-        console.log(`FormData for ${fileType}:`, formData.get(fileType));
+        formData.append("file", file);
 
         const url = CATEGORY_API.POST_FILE_UPLOAD;
 
-        api
-            .post(url, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+        api.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            if (response.status === 200) {
+                setSuccessMessage(`${fileType} uploaded successfully.`);
+                setUploadedFiles(prevState => ({
+                    ...prevState,
+                    [`${fileType}Url`]: response.data.filename
+                }));
+            } else {
+                console.error("Unexpected response:", response);
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                if (error.response.status === 417) {
+                    console.error("Error 417:", error);
+                    setErrorMessage(error.response.data);
+                } else if (error.response.status === 500) {
+                    console.error("Error 500:", error);
+                    setErrorMessage("Something Went Wrong!");
                 }
-            })
-            .then(response => {
-                if (response.status === 200) {
-                    console.log(`${fileType} upload response:`, response.data);
-                    localStorage.setItem("successMessage", `${fileType} uploaded successfully.`);
-                    localStorage.removeItem("errorMessage");
-                    window.location.reload();
-                } else {
-                    console.error("Unexpected response:", response);
-                }
-            })
-            .catch(error => {
-                if (error.response) {
-                    if (error.response.status === 417) {
-                        console.error("Error 417:", error);
-                        setErrorMessage(error.response.data);
-                    } else if (error.response.status === 500) {
-                        console.error("Error 500:", error);
-                        setErrorMessage("Something Went Wrong!");
-                    }
-                }
-            });
-    }
+            }
+        });
+    };
 
-    useEffect(() => {
-        const errorMessage = localStorage.getItem("errorMessage");
-        if (errorMessage) {
-            setErrorMessage(errorMessage);
-            localStorage.removeItem("errorMessage");
+    const allFilesUploadeHandler = () => {
+        const errors = {};
+        setErrorMessage("");
+
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            setSuccessMessage("");
+            return;
         }
-    }, []);
+
+        setFormErrors({ photo: "", voice: "" });
+
+        const updateBody = {
+            name: userProfileData?.name,
+            voiceUrl: uploadedFiles.voiceUrl,
+            profileUrl: uploadedFiles.photoUrl
+        };
+
+        const url = CATEGORY_API.UPDATE_FILE_UPLOAD;
+        console.log("updateBody", updateBody);
+
+        api.patch(url, updateBody, {
+            headers: {
+                'x-coreplatform-concurrencystamp': userProfileData?.concurrencyStamp
+            }
+        })
+        .then(response => {
+            if (response.status === 204) {
+                setSuccessMessage("Files uploaded successfully.");
+                window.location.reload()
+                
+            } else {
+                console.error("Unexpected response:", response);
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                if (error.response.status === 417) {
+                    console.error("Error 417:", error);
+                    setErrorMessage(error.response.data);
+                } else if (error.response.status === 500) {
+                    console.error("Error 500:", error);
+                    setErrorMessage("Something Went Wrong!");
+                }
+            }
+        });
+    };
 
     const clearForm = () => {
         setFiles({ photo: null, voice: null });
         setFormErrors({ photo: "", voice: "" });
         setErrorMessage("");
         setSuccessMessage("");
-        window.location.reload()
-    }
+        window.location.reload();
+    };
 
     return (
         <React.Fragment>
@@ -130,10 +149,10 @@ const FileUpload = () => {
                                         <div className="table-responsive mb-0" data-pattern="priority-columns">
                                             <h6>
                                                 {formErrors.photo && (
-                                                    <h7 className="error-message">{formErrors.photo}</h7>
+                                                    <span className="error-message">{formErrors.photo}</span>
                                                 )}
                                                 {formErrors.voice && (
-                                                    <h7 className="error-message">{formErrors.voice}</h7>
+                                                    <span className="error-message">{formErrors.voice}</span>
                                                 )}
                                             </h6>
                                             <h6>
@@ -183,16 +202,9 @@ const FileUpload = () => {
                                                 <Button
                                                     type="button"
                                                     className="btn btn-primary"
-                                                    onClick={() => createFileUpload('photo')}
+                                                    onClick={allFilesUploadeHandler}
                                                 >
-                                                    Submit Photo
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    className="btn btn-primary"
-                                                    onClick={() => createFileUpload('voice')}
-                                                >
-                                                    Submit Voice
+                                                    Submit
                                                 </Button>
                                             </div>
                                             &nbsp;
