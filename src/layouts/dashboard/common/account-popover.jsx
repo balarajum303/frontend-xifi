@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,8 +10,25 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
-import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
 import { Dialog } from '@mui/material';
+import {
+  MDBCol,
+  MDBContainer,
+  MDBRow,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBCardImage,
+
+} from 'mdb-react-ui-kit';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import api from 'src/components/Common/api';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import { useNavigate } from 'react-router-dom';
+import { Button, Container } from 'reactstrap';
+import FileUpload from './FileUpload';
+
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +52,8 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const [openProfileDialog, setOpenProfileDialog] = useState(false);
+  const [userProfileData,setUserProfileData]=useState([])
+  const navigate=useNavigate()
   const handleOpenProfileDialog = () => {
     setOpenProfileDialog(true);
 
@@ -49,11 +68,42 @@ export default function AccountPopover() {
   };
 
   const handleClose = () => {
-    localStorage.clear();
-    window.location.replace(`${window.location.origin}/login`);
     setOpen(null);
   };
+const logoutHandler=()=>{
+  window.location.replace(`${window.location.origin}/login`);
+  setOpen(null);
+}
+const homeHandler=()=>{
+  window.location.replace(`${window.location.origin}/`);
+  setOpen(null);
+}
 
+///Get User Profile /////
+const getUserProfileData = () => {
+  // const urls = `${API_BASE_URL}/${selectedPath}?categoryId=${selectedPublicId}`;
+  // console.log("urls-get",urls)
+  const url = `${CATEGORY_API.GET_USER_PROFILE}`;
+  api
+    .get(url)
+    .then(response => {
+      console.log("get user Profile", response.data)
+      // const categories = response.data;
+      // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
+      // setMaxrole(maxrole);
+      setUserProfileData(response.data)
+    })
+    .catch(error => {
+      console.error(error)
+    })
+}
+useEffect(()=>{
+  getUserProfileData()
+},[])
+
+const handleCancel = () => {
+  navigate(`${window.location.pathname}`); // Navigate one step back in the browser history
+};
   return (
     <>
       <IconButton
@@ -108,7 +158,15 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={option.label === 'Profile' ? handleOpenProfileDialog : handleClose}>
+          <MenuItem key={option.label}  onClick={() => {
+            if (option.label === 'Profile') {
+              handleOpenProfileDialog();
+            } else if (option.label === 'Home') {
+              homeHandler();
+            } else {
+              handleClose();
+            }
+          }}>
             {option.label}
           </MenuItem>
         ))}
@@ -118,69 +176,99 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={logoutHandler}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
         </MenuItem>
       </Popover>
-      {/* <Dialog  open={openProfileDialog} onClose={handleCloseProfileDialog} sx={{ width: '100vw' }}>
-        <section className="vh-100" style={{ backgroundColor: '#f4f5f7' }}>
-          <MDBContainer className="py-5 h-100">
-            <MDBRow className="justify-content-center align-items-center h-100">
-              <MDBCol lg="6" className="mb-4 mb-lg-0">
-                <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
-                  <MDBRow className="g-0">
-                    <MDBCol md="4" className="gradient-custom text-center text-white"
-                      style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}>
-                      <MDBCardImage src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                        alt="Avatar" className="my-5" style={{ width: '80px' }} fluid />
-                      <MDBTypography tag="h5">Marie Horwitz</MDBTypography>
-                      <MDBCardText>Web Designer</MDBCardText>
-                      <MDBIcon far icon="edit mb-5" />
-                    </MDBCol>
-                    <MDBCol md="8">
-                      <MDBCardBody className="p-4">
-                        <MDBTypography tag="h6">Information</MDBTypography>
-                        <hr className="mt-0 mb-4" />
-                        <MDBRow className="pt-1">
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">Email</MDBTypography>
-                            <MDBCardText className="text-muted">info@example.com</MDBCardText>
-                          </MDBCol>
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">Phone</MDBTypography>
-                            <MDBCardText className="text-muted">123 456 789</MDBCardText>
-                          </MDBCol>
-                        </MDBRow>
+      <Dialog  open={openProfileDialog} onClose={handleCloseProfileDialog} sx={{ width: '100vw' }}  
+        fullWidth maxWidth="md"
+       >        {/* <section className="vh-100" style={{ backgroundColor: '#f4f5f7',display:"flex",flexDirection:"row",justifyContent:"space-evenly" }}> */}
 
-                        <MDBTypography tag="h6">Information</MDBTypography>
-                        <hr className="mt-0 mb-4" />
-                        <MDBRow className="pt-1">
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">Email</MDBTypography>
-                            <MDBCardText className="text-muted">info@example.com</MDBCardText>
-                          </MDBCol>
-                          <MDBCol size="6" className="mb-3">
-                            <MDBTypography tag="h6">Phone</MDBTypography>
-                            <MDBCardText className="text-muted">123 456 789</MDBCardText>
-                          </MDBCol>
-                        </MDBRow>
+        <section  style={{ backgroundColor: '#f4f5f7'}}>
+      <MDBContainer className="py-5" style={{paddingLeft:"8%"}}>
+        
 
-                        <div className="d-flex justify-content-start">
-                          <a href="#!"><MDBIcon fab icon="facebook me-3" size="lg" /></a>
-                          <a href="#!"><MDBIcon fab icon="twitter me-3" size="lg" /></a>
-                          <a href="#!"><MDBIcon fab icon="instagram me-3" size="lg" /></a>
-                        </div>
-                      </MDBCardBody>
-                    </MDBCol>
-                  </MDBRow>
-                </MDBCard>
-              </MDBCol>
-            </MDBRow>
-          </MDBContainer>
-        </section>
-      </Dialog> */}
+        <MDBRow>
+          <MDBCol lg="3">
+            <MDBCard className="mb-4">
+              <MDBCardBody className="text-center">
+                <MDBCardImage
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                  alt="avatar"
+                  className="rounded-circle"
+                  style={{ width: '150px' }}
+                  fluid />
+                <h3  style={{marginTop:"3px"}} className="text-muted mb-1">{userProfileData.name}</h3>
+                
+                
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+          <MDBCol lg="8">
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Full Name</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">{userProfileData.name}</MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Email</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">{userProfileData.email}</MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Role</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">{userProfileData.role}</MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Mobile</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">{userProfileData.mobileNumber}</MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                {/* <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Status</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">{userProfileData.status}</MDBCardText>
+                  </MDBCol>
+                </MDBRow> */}
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+
+        <MDBRow style={{ width: "97.5%", marginLeft: "-23px" }}>
+          <FileUpload />
+        </MDBRow>
+
+        
+      </MDBContainer>
+    </section>
+
+
+      
+      </Dialog>
     </>
   );
 }
