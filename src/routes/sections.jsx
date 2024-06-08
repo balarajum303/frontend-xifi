@@ -1,10 +1,13 @@
 import { Route, Routes } from 'react-router-dom';
-import { publicRoutes } from './publicRoutes';
-import Page404 from '../pages/page-not-found'
-import { Authentication } from './Authentication';
-import { lazy, useEffect, useState } from 'react';
+import { lazy, useState, useEffect } from 'react';
+
 import api from 'src/components/Common/api';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
+
+import Page404 from '../pages/page-not-found'
+import { publicRoutes } from './publicRoutes';
+import { Authentication } from './Authentication';
+
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const service = lazy(() => import('src/pages/service'));

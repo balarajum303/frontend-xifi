@@ -1,4 +1,5 @@
 import axios from "axios"
+
 export const API_BASE_URL = "http://localhost:3000"
 export const CATEGORY_API = {
   GET_USER_PROFILE:"/user-profile",

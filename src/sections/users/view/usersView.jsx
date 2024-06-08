@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -11,75 +11,71 @@ import Typography from '@mui/material/Typography';
 import { Box, Dialog, TextField } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import edit from "../../../../public/assets/images/edit_icon.gif"
 
 import { users } from 'src/_mock/user';
 
+import api from 'src/components/Common/api';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
+import { emptyRows } from '../utils';
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-import api from 'src/components/Common/api';
-import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import edit from '../../../../public/assets/images/edit_icon.gif';
 
 // ----------------------------------------------------------------------
 
 export default function UsersView() {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);
-  const [getData, setGetData] = useState([])
-  const [isEdit, setisEdit] = useState(false)
+  const [getData, setGetData] = useState([]);
+  const [isEdit, setisEdit] = useState(false);
 
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [formdetails, setFormdetails] = useState({
     name: '',
-    email: "",
-    role: "",
-    mobileNumber: ""
-
+    email: '',
+    role: '',
+    mobileNumber: '',
   });
   const [formErrors, setFormErrors] = useState({
     name: '',
-    email: "",
-    role: "",
-    mobileNumber: ""
-
+    email: '',
+    role: '',
+    mobileNumber: '',
   });
-  const [successMessage, setSuccessMessage] = useState("")
-
-
-  // /get category /////
-  const getAllUsers = () => {
-    const url = `${CATEGORY_API.GET_USERS}`;
-    api
-      .get(url)
-      .then(response => {
-        console.log("get-all users", response)
-        // const categories = response.data;
-        // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
-        // setMaxrole(maxrole);
-        setGetData(response.data)
-      })
-      .catch(error => {
-        console.error(error)
-      })
-  }
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    getAllUsers()
-  }, [])
+    // /get category /////
+    const getAllUsers = () => {
+      const url = `${CATEGORY_API.GET_USERS}?pageSize=${rowsPerPage}&pageNumber=${page}`;
+      api
+        .get(url)
+        .then((response) => {
+          console.log('get-all users', response);
+          // const categories = response.data;
+          // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
+          // setMaxrole(maxrole);
+          setGetData(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+    getAllUsers();
+  }, [rowsPerPage, page]);
 
   const addCategoryHandler = () => {
     // setErrorMessage("");
@@ -87,56 +83,54 @@ export default function UsersView() {
     const errors = {};
 
     if (!formdetails.name) {
-      errors.name = "name is required.";
+      errors.name = 'name is required.';
     }
     if (!formdetails.email) {
-      errors.email = "email is required.";
+      errors.email = 'email is required.';
     }
     if (!formdetails.role) {
-      errors.role = "role is required.";
+      errors.role = 'role is required.';
     }
     if (!formdetails.mobileNumber) {
-      errors.mobileNumber = "mobileNumber is required.";
+      errors.mobileNumber = 'mobileNumber is required.';
     }
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      setSuccessMessage("");
+      setSuccessMessage('');
       return;
     }
 
     setFormErrors({
-      name: "",
-      email: "",
-      role: "",
-      mobileNumber: ""
+      name: '',
+      email: '',
+      role: '',
+      mobileNumber: '',
     });
-    const url = CATEGORY_API.POST_USERS
+    const url = CATEGORY_API.POST_USERS;
     // const newrole = maxrole + 1;
     const reqCategoryBody = {
       name: formdetails.name,
       email: formdetails.email,
       role: formdetails.role,
       mobileNumber: formdetails.mobileNumber,
-      status: "active"
-    }
+      status: 'active',
+    };
 
-    console.log("req-category-body-", reqCategoryBody)
+    console.log('req-category-body-', reqCategoryBody);
     api
       .post(url, reqCategoryBody)
-      .then(response => {
-
+      .then((response) => {
         if (response) {
-          setSuccessMessage("service added successfully")
-          window.location.reload()
+          setSuccessMessage('service added successfully');
+          window.location.reload();
         } else {
-          console.error("Unexpected response:", response)
+          console.error('Unexpected response:', response);
         }
       })
-      .catch(error => {
-        console.log("err", error)
-      })
-  }
-
+      .catch((error) => {
+        console.log('err', error);
+      });
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -186,7 +180,7 @@ export default function UsersView() {
     setPage(0);
     setFilterName(event.target.value);
   };
-  const dataFiltered = getData.filter(item =>
+  const dataFiltered = getData.filter((item) =>
     item.name.toLowerCase().includes(filterName.toLowerCase())
   );
 
@@ -197,7 +191,7 @@ export default function UsersView() {
   //   setOpen(true);
   // };
   const handleClickOpen = (row) => {
-    console.log("row", row)
+    console.log('row', row);
     if (row.name) {
       setisEdit(true);
       setFormdetails({
@@ -211,67 +205,55 @@ export default function UsersView() {
       });
       // Set isEdit to false when opening dialog for adding new service
     }
-    console.log("isEdit:", isEdit);
+    console.log('isEdit:', isEdit);
     setOpen(true);
-
   };
 
-  ////////----- update----////////////
+  /// /////----- update----////////////
   const updateCategoryHandler = () => {
+    console.log('formdetails in update', formdetails);
 
-    console.log("formdetails in update", formdetails)
-
-
-    let updateCategoryBody = {
+    const updateCategoryBody = {
       name: formdetails?.name,
       email: formdetails.email,
       role: formdetails.role,
-      mobileNumber: formdetails.mobileNumber
-    }
-    console.log(updateCategoryBody, "updateCategoryBody")
+      mobileNumber: formdetails.mobileNumber,
+    };
+    console.log(updateCategoryBody, 'updateCategoryBody');
     const url = `${CATEGORY_API.UPDATE_CATEGORY}/${formdetails.publicId}`;
-    api.patch(url, updateCategoryBody, {
-      headers: {
-        'x-coreplatform-concurrencystamp': formdetails.concurrencyStamp
-      }
-    })
+    api
+      .patch(url, updateCategoryBody, {
+        headers: {
+          'x-coreplatform-concurrencystamp': formdetails.concurrencyStamp,
+        },
+      })
 
-      .then(response => {
+      .then((response) => {
         if (response.status === 204) {
-
-          window.location.reload()
+          window.location.reload();
         } else {
-          console.error("Unexpected response:", response)
+          console.error('Unexpected response:', response);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           if (error.response.status === 417) {
-            console.error("Error 417:", error)
-
+            console.error('Error 417:', error);
           } else if (error.response.status === 500) {
-            console.error("Error 500:", error)
-
+            console.error('Error 500:', error);
           }
         }
-      })
-  }
+      });
+  };
   const handleClose = () => {
     setOpen(false);
   };
-
 
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
-        <h6>
-          {successMessage && (
-            <div className="success-message">
-              {successMessage}
-            </div>
-          )}
-        </h6>
+        <h6>{successMessage && <div className="success-message">{successMessage}</div>}</h6>
         <Button
           variant="contained"
           color="inherit"
@@ -312,7 +294,7 @@ export default function UsersView() {
               />
               <TableBody>
                 {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
@@ -322,6 +304,7 @@ export default function UsersView() {
                       mobileNumber={row.mobileNumber}
                       status={row.status}
                       edit={
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                         <img
                           src={edit}
                           alt="Edit"
@@ -353,18 +336,15 @@ export default function UsersView() {
           count={users.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 20, 50]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
 
       <Dialog open={open} onClose={handleClose} sx={{ width: '100vw' }}>
-
-
         <Box width="30vw" p={2} display="flex" flexDirection="column" gap={2}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-
-            <Typography variant="h5">{isEdit ? "Update User" : "Add New User"}</Typography>
+            <Typography variant="h5">{isEdit ? 'Update User' : 'Add New User'}</Typography>
 
             <Close
               sx={{ cursor: 'pointer' }}
@@ -375,7 +355,6 @@ export default function UsersView() {
           </Box>
 
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your name"
             onChange={(e) => {
@@ -388,12 +367,11 @@ export default function UsersView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.name && !formdetails.name ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border: formErrors.name && !formdetails.name ? '1px solid red' : 'none',
+              borderRadius: '8px',
             }}
           />
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your email"
             onChange={(e) => {
@@ -406,12 +384,11 @@ export default function UsersView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.email && !formdetails.email ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border: formErrors.email && !formdetails.email ? '1px solid red' : 'none',
+              borderRadius: '8px',
             }}
           />
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your role"
             onChange={(e) => {
@@ -424,12 +401,11 @@ export default function UsersView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.role && !formdetails.role ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border: formErrors.role && !formdetails.role ? '1px solid red' : 'none',
+              borderRadius: '8px',
             }}
           />
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your Mobile Number"
             onChange={(e) => {
@@ -442,12 +418,18 @@ export default function UsersView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.mobileNumber && !formdetails.mobileNumber ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border:
+                formErrors.mobileNumber && !formdetails.mobileNumber ? '1px solid red' : 'none',
+              borderRadius: '8px',
             }}
           />
-          <Button fullWidth variant="contained" color="primary" onClick={isEdit ? updateCategoryHandler : addCategoryHandler}>
-            {isEdit ? "Update" : "Add"}
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={isEdit ? updateCategoryHandler : addCategoryHandler}
+          >
+            {isEdit ? 'Update' : 'Add'}
           </Button>
         </Box>
       </Dialog>

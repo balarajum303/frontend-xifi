@@ -1,19 +1,15 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import api from 'src/components/Common/api';
+import Iconify from 'src/components/iconify';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
 // ----------------------------------------------------------------------
@@ -41,10 +37,10 @@ export default function UserTableRow({
   const handleCloseMenu = () => {
     setOpen(null);
   };
-  ////////----- update----////////////
+  /// /////----- update----////////////
 const statusUpdateHandler = (selectedStatus) => {
 console.log("check-ststua ",publicId,concurrencyStamp)
-  let statusUpdateBody = {
+  const statusUpdateBody = {
     status: selectedStatus
   }
   console.log(statusUpdateBody, "statusUpdateBody")

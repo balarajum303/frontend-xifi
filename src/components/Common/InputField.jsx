@@ -1,7 +1,7 @@
 
-import { Input } from 'reactstrap';
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Input } from 'reactstrap';
+
 const InputField = ({ label, name, value, error, onChange, type = "text", isRequired = false }) => (
   <>
     <td >{isRequired && <span className="mandatory">*</span>}{label}</td>

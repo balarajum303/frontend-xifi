@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -11,21 +11,21 @@ import Typography from '@mui/material/Typography';
 import { Box, Dialog, TextField } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import edit from "../../../../public/assets/images/edit_icon.gif"
 
 import { users } from 'src/_mock/user';
 
+import api from 'src/components/Common/api';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
+import { emptyRows } from '../utils';
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-import api from 'src/components/Common/api';
-import { API_BASE_URL, CATEGORY_API } from 'src/components/Common/apiConfig';
+import edit from "../../../../public/assets/images/edit_icon.gif"
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ export default function UserPage() {
   });
   const [successMessage, setSuccessMessage] = useState("")
 
-  /////path and publicId's/////
+  /// //path and publicId's/////
   const path = window.location.pathname;
   const pathSegments = path.split('/'); // Split the path into segments
   const selectedPath = pathSegments[1]; // Extract the dynamic path segment
@@ -232,13 +232,13 @@ export default function UserPage() {
 
   };
 
-  ////////----- update----////////////
+  /// /////----- update----////////////
   const updateCategoryHandler = () => {
 
     console.log("formdetails in update", formdetails)
 
 
-    let updateCategoryBody = {
+    const updateCategoryBody = {
       name: formdetails?.name,
       email: formdetails.email,
       role: formdetails.role,

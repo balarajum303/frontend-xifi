@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react"
-import PropTypes from "prop-types"
-
-import { Row, Col, Input, Card, CardBody, Container, Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
-
-import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
-import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-import api, { CATEGORY_API } from "src/components/Common/apiConfig";
-import InputField from "src/components/Common/InputField";
 // Example of importing Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState ,useEffect } from "react"
+import { Row, Col, Card, Modal, CardBody, Container } from "reactstrap";
+import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import { Tr, Th, Td, Table, Thead, Tbody } from "react-super-responsive-table";
+
+import InputField from "src/components/Common/InputField";
+import api, { CATEGORY_API } from "src/components/Common/apiConfig";
 
 
 
@@ -22,17 +20,17 @@ const Services = () => {
     const [isEdit, setisEdit] = useState(false)
     const [deleteId, setDelteID] = useState(null)
     const [filterdata, setFilterdata] = useState([])
-    const [query, setQuery] = useState("")
+    // const [query, setQuery] = useState("")
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
+    // const handleShow = () => setShow(true)
     const [successMessage, setSuccessMessage] = useState("")
     const [formErrors, setFormErrors] = useState({
         categoryName: "",
     })
     const [errorMessage, setErrorMessage] = useState("")
 
-    ////////////-----------get-----------////////////
+    /// /////////-----------get-----------////////////
     const getAdmissionEntry = () => {
         const url = CATEGORY_API.GET_ALL_ADMISSION_STATUS
         api
@@ -52,6 +50,7 @@ const Services = () => {
     }, [])
 
     useEffect(() => {
+        // eslint-disable-next-line no-shadow
         const successMessage = localStorage.getItem("successMessage")
         if (successMessage) {
             setSuccessMessage(successMessage)
@@ -59,7 +58,7 @@ const Services = () => {
         }
     }, [])
 
-    /////------post---------------------------//////////////////////////////////
+    /// //------post---------------------------//////////////////////////////////
     const createAdmissionEntry = () => {
         // Clear any previous error message
         setErrorMessage("")
@@ -80,14 +79,14 @@ const Services = () => {
             name: "",
         })
 
-        const name = formdetails.name
+        const {name} = formdetails
         const url = CATEGORY_API.POST_ADMISSION_STATUS
         api
             .post(url, formdetails)
             .then(response => {
                 getAdmissionEntry()
                 if (response.status === 200) {
-                    //clearForm();
+                    // clearForm();
                     localStorage.setItem("successMessage", `${response.data}`)
                     localStorage.removeItem("errorMessage")
                     window.location.reload()
@@ -119,6 +118,7 @@ const Services = () => {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line no-shadow
         const errorMessage = localStorage.getItem("errorMessage")
         if (errorMessage) {
             setErrorMessage(errorMessage)
@@ -126,7 +126,7 @@ const Services = () => {
         }
     }, [])
 
-    ///////----delete------////////////////
+    /// ////----delete------////////////////
     const deleteAdmissionEntry = () => {
         const url = `${CATEGORY_API.DELETE_ADMISSION_STATUS}/${deleteId}`
         api
@@ -161,7 +161,7 @@ const Services = () => {
     const restDataHandler = () => {
         clearForm()
     }
-    ///////////////////////.....................edit........//////////////////////////////////
+    /// ////////////////////.....................edit........//////////////////////////////////
     const getEditEntry = user => {
         console.log(localStorage.getItem("token"))
         const url = `${CATEGORY_API.GET_ADMISSION_STATUS_BYID}/${user.id}`
@@ -172,7 +172,7 @@ const Services = () => {
         })
     }
 
-    ////////----- update----////////////
+    /// /////----- update----////////////
     const updateAdmissionEntry = () => {
         setErrorMessage("")
 
@@ -192,11 +192,11 @@ const Services = () => {
             name: "",
         })
 
-        let req = {
+        const req = {
             id: formdetails.id,
             name: formdetails.name,
         }
-        const name = formdetails.name
+        const {name} = formdetails
         const url = CATEGORY_API.UPDATE_ADMISSION_STATUS
         api
             .put(url, req)
@@ -231,8 +231,8 @@ const Services = () => {
     }
 
     const handleInputChange = e => {
-        let newStatus = { ...formdetails }
-        let inputName = e.target.name
+        const newStatus = { ...formdetails }
+        const inputName = e.target.name
         newStatus[inputName] = e.target.value
         setFormdetails(newStatus)
     }
@@ -243,9 +243,9 @@ const Services = () => {
 
 
     return (
-        <React.Fragment>
+        <>
             <div className="page-content">
-                <Container fluid={true}>
+                <Container fluid>
                     <Row>
                         <Col>
                             <Card>
@@ -333,16 +333,13 @@ const Services = () => {
                                                             <Td>{index + 1}</Td>
                                                             <Td>{user.admissionStatus}</Td>
                                                             <Td>
-                                                                <button style={{ border: "none" }}>
-
-                                                                </button>
+                                                                <button style={{ border: "none" }} />
                                                             </Td>
                                                             <Td>
                                                                 <button
                                                                     style={{ border: "none" }}
                                                                     onClick={() => setDelteID(user.id)}
-                                                                >
-                                                                </button>
+                                                                 />
                                                             </Td>
                                                         </Tr>
                                                     ))}
@@ -357,7 +354,7 @@ const Services = () => {
                 </Container>
                 <Modal
                     show={show}
-                    centered={true}
+                    centered
                     onHide={handleClose}
                     animation={false}
                 >
@@ -383,7 +380,7 @@ const Services = () => {
             {successMessage && Object.keys(formErrors).length === 0 && (
                 <div className="success-message">{successMessage}</div>
             )}
-        </React.Fragment>
+        </>
     )
 }
 

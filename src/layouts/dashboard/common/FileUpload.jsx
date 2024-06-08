@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Tr, Td, Table, Tbody } from "react-super-responsive-table";
+import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import {
     Row,
     Col,
     Card,
+    Button,
     CardBody,
-    Container,
-    Button
+    Container
 } from "reactstrap";
-import { Table, Tbody, Tr, Td } from "react-super-responsive-table";
-import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-import { CATEGORY_API } from "src/components/Common/apiConfig";
+
 import api from "src/components/Common/api";
+import { CATEGORY_API } from "src/components/Common/apiConfig";
 
 const FileUpload = () => {
     const [formdetails, setFormdetails] = useState({
@@ -119,9 +120,9 @@ const FileUpload = () => {
     }
 
     return (
-        <React.Fragment>
+        <>
             <div className="page-content">
-                <Container fluid={true}>
+                <Container fluid>
                     <Row>
                         <Col>
                             <Card>
@@ -207,7 +208,7 @@ const FileUpload = () => {
             {successMessage && Object.keys(formErrors).length === 0 && (
                 <div className="success-message">{successMessage}</div>
             )}
-        </React.Fragment>
+        </>
     );
 }
 

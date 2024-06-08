@@ -1,6 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
+import {
+  MDBCol,
+  MDBRow,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBContainer,
+  MDBCardImage,
+
+} from 'mdb-react-ui-kit';
 
 import Box from '@mui/material/Box';
+import { Dialog } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Popover from '@mui/material/Popover';
@@ -10,23 +23,10 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
-import { Dialog } from '@mui/material';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
 
-} from 'mdb-react-ui-kit';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 import api from 'src/components/Common/api';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
-import { useNavigate } from 'react-router-dom';
-import { Button, Container } from 'reactstrap';
+
 import FileUpload from './FileUpload';
 
 
@@ -79,7 +79,7 @@ const homeHandler=()=>{
   setOpen(null);
 }
 
-///Get User Profile /////
+/// Get User Profile /////
 const getUserProfileData = () => {
   // const urls = `${API_BASE_URL}/${selectedPath}?categoryId=${selectedPublicId}`;
   // console.log("urls-get",urls)

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import SvgColor from 'src/components/svg-color';
+
 import api from 'src/components/Common/api';
+import SvgColor from 'src/components/svg-color';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
 const configNavigation = () => {
