@@ -21,10 +21,13 @@ import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 import configNavigation from './configNavigation';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import api from 'src/components/Common/api';
 
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
+  const [loginData,setLoginData]=useState([])
   const navConfig = configNavigation()
   const pathname = usePathname();
 
@@ -36,8 +39,28 @@ export default function Nav({ openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-  ///post/////
-
+  /// get user profile/////
+  const getUserProfileData = () => {
+    // const urls = `${API_BASE_URL}/${selectedPath}?categoryId=${selectedPublicId}`;
+    // console.log("urls-get",urls)
+    const url = `${CATEGORY_API.GET_USER_PROFILE}`;
+    api
+      .get(url)
+      .then(response => {
+        console.log("get user Profile", response.data)
+        // const categories = response.data;
+        // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
+        // setMaxrole(maxrole);
+        setLoginData(response.data)
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }
+  useEffect(()=>{
+    getUserProfileData()
+  },[])
+  
 
   const renderAccount = (
     <Box
@@ -55,7 +78,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Avatar src={account.photoURL} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{loginData.name}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -11,74 +11,75 @@ import Typography from '@mui/material/Typography';
 import { Box, Dialog, TextField } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import edit from "../../../../public/assets/images/edit_icon.gif"
 
 import { users } from 'src/_mock/user';
 
+import api from 'src/components/Common/api';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
+import { emptyRows } from '../utils';
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-import api from 'src/components/Common/api';
-import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import edit from '../../../../public/assets/images/edit_icon.gif';
 
 // ----------------------------------------------------------------------
 
 export default function ServicesView() {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);
-  const [getData, setGetData] = useState([])
-  const [maxCategoryCode, setMaxCategoryCode] = useState(0);
-  const [isEdit, setisEdit] = useState(false)
+  const [getData, setGetData] = useState([]);
+  // const [maxCategoryCode, setMaxCategoryCode] = useState(1);
+  const [isEdit, setisEdit] = useState(false);
 
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [formdetails, setFormdetails] = useState({
     categoryName: '',
-    categoryDescription: "",
-    categoryCode: ""
-
+    categoryDescription: '',
+    categoryCode: '',
   });
   const [formErrors, setFormErrors] = useState({
     categoryName: '',
-    categoryDescription: "",
-    categoryCode: ""
-
+    categoryDescription: '',
+    categoryCode: '',
   });
-  const [successMessage, setSuccessMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState('');
 
-
-  // /get category /////
-  const getAllCategory = () => {
-    const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${50}`;
-    api
-      .get(url)
-      .then(response => {
-        console.log("get-all category", response)
-        // const categories = response.data;
-        // const maxCategoryCode = Math.max(...categories.map(category => parseInt(category.categoryCode)), 0); // Find max category code
-        // setMaxCategoryCode(maxCategoryCode);
-        setGetData(response.data)
-      })
-      .catch(error => {
-        console.error(error)
-      })
-  }
+  // /get category /////ro
+ 
 
   useEffect(() => {
-    getAllCategory()
-  }, [])
+     const getAllCategory = () => {
+       const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${rowsPerPage}&pageNumber=${page}`;
+       api
+         .get(url)
+         .then((response) => {
+           console.log('get-all category', response);
+           // const categories = response.data;
+           // const maxCategoryCode = Math.max(...categories.map(category => parseInt(category.categoryCode)), 0); // Find max category code
+           // setMaxCategoryCode(maxCategoryCode);
+           setGetData(response.data);
+         })
+         .catch((error) => {
+           console.error(error);
+         });
+     };
+  
+    getAllCategory();
+  }, [page, rowsPerPage]);
+
+  console.log(getData, 'get Data');
 
   const addCategoryHandler = () => {
     // setErrorMessage("");
@@ -86,52 +87,49 @@ export default function ServicesView() {
     const errors = {};
 
     if (!formdetails.categoryName) {
-      errors.categoryName = "categoryName is required.";
+      errors.categoryName = 'categoryName is required.';
     }
     if (!formdetails.categoryDescription) {
-      errors.categoryDescription = "categoryDescription is required.";
+      errors.categoryDescription = 'categoryDescription is required.';
     }
     if (!formdetails.categoryCode) {
-      errors.categoryCode = "categoryCode is required.";
+      errors.categoryCode = 'categoryCode is required.';
     }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      setSuccessMessage("");
+      setSuccessMessage('');
       return;
     }
 
     setFormErrors({
-      categoryName: "",
-      categoryDescription: "",
-      categoryCode: ""
+      categoryName: '',
+      categoryDescription: '',
+      categoryCode: '',
     });
-    const url = CATEGORY_API.POST_CATEGORY
+    const url = CATEGORY_API.POST_CATEGORY;
     // const newCategoryCode = maxCategoryCode + 1;
     const reqCategoryBody = {
       categoryName: formdetails.categoryName,
       categoryDescription: formdetails.categoryName,
       categoryCode: formdetails.categoryCode,
-      status: "active"
-    }
+      status: 'active',
+    };
 
-    console.log("req-category-body-", reqCategoryBody)
     api
       .post(url, reqCategoryBody)
-      .then(response => {
-
+      .then((response) => {
         if (response.status === 201) {
-          setSuccessMessage("service added successfully")
-          window.location.reload()
+          setSuccessMessage('service added successfully');
+          window.location.reload();
         } else {
-          console.error("Unexpected response:", response)
+          console.error('Unexpected response:', response);
         }
       })
-      .catch(error => {
-        console.log("err", error)
-      })
-  }
-
+      .catch((error) => {
+        console.log('err', error);
+      });
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -172,6 +170,8 @@ export default function ServicesView() {
     setPage(newPage);
   };
 
+  console.log(page, 'page');
+
   const handleChangeRowsPerPage = (event) => {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -187,7 +187,7 @@ export default function ServicesView() {
   //   comparator: getComparator(order, orderBy),
   //   filterName,
   // });
-  const dataFiltered = getData.filter(item =>
+  const dataFiltered = getData.filter((item) =>
     item.categoryName.toLowerCase().includes(filterName.toLowerCase())
   );
 
@@ -198,7 +198,7 @@ export default function ServicesView() {
   //   setOpen(true);
   // };
   const handleClickOpen = (row) => {
-    console.log("row", row)
+    console.log('row', row);
     if (row.categoryCode) {
       setisEdit(true);
       setFormdetails({
@@ -212,66 +212,54 @@ export default function ServicesView() {
       });
       // Set isEdit to false when opening dialog for adding new service
     }
-    console.log("isEdit:", isEdit);
+    console.log('isEdit:', isEdit);
     setOpen(true);
-
   };
 
-  ////////----- update----////////////
+  /// /////----- update----////////////
   const updateCategoryHandler = () => {
+    console.log('formdetails in update', formdetails);
 
-    console.log("formdetails in update", formdetails)
-
-
-    let updateCategoryBody = {
+    const updateCategoryBody = {
       categoryName: formdetails?.categoryName,
       categoryDescription: formdetails.categoryDescription,
-      categoryCode: formdetails.categoryCode
-    }
-    console.log(updateCategoryBody, "updateCategoryBody")
+      categoryCode: formdetails.categoryCode,
+    };
+    console.log(updateCategoryBody, 'updateCategoryBody');
     const url = `${CATEGORY_API.UPDATE_CATEGORY}/${formdetails.publicId}`;
-    api.patch(url, updateCategoryBody, {
-      headers: {
-        'x-coreplatform-concurrencystamp': formdetails.concurrencyStamp
-      }
-    })
+    api
+      .patch(url, updateCategoryBody, {
+        headers: {
+          'x-coreplatform-concurrencystamp': formdetails.concurrencyStamp,
+        },
+      })
 
-      .then(response => {
+      .then((response) => {
         if (response.status === 204) {
-           window.location.reload()
-          
+          window.location.reload();
         } else {
-          console.error("Unexpected response:", response)
+          console.error('Unexpected response:', response);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           if (error.response.status === 417) {
-            console.error("Error 417:", error)
-
+            console.error('Error 417:', error);
           } else if (error.response.status === 500) {
-            console.error("Error 500:", error)
-
+            console.error('Error 500:', error);
           }
         }
-      })
-  }
+      });
+  };
   const handleClose = () => {
     setOpen(false);
   };
-
 
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Services</Typography>
-        <h6>
-          {successMessage && (
-            <div className="success-message">
-              {successMessage}
-            </div>
-          )}
-        </h6>
+        <h6>{successMessage && <div className="success-message">{successMessage}</div>}</h6>
         <Button
           variant="contained"
           color="inherit"
@@ -307,14 +295,15 @@ export default function ServicesView() {
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                {getData
+                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
                       domain={row.categoryName}
                       status={row.status}
                       email={
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                         <img
                           src={edit}
                           alt="Edit"
@@ -346,18 +335,15 @@ export default function ServicesView() {
           count={users.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 20, 50, 100]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
 
       <Dialog open={open} onClose={handleClose} sx={{ width: '100vw' }}>
-
-
         <Box width="30vw" p={2} display="flex" flexDirection="column" gap={2}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-
-            <Typography variant="h5">{isEdit ? "Update Service" : "Add New Service"}</Typography>
+            <Typography variant="h5">{isEdit ? 'Update Service' : 'Add New Service'}</Typography>
 
             <Close
               sx={{ cursor: 'pointer' }}
@@ -368,7 +354,6 @@ export default function ServicesView() {
           </Box>
 
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your categoryName"
             onChange={(e) => {
@@ -381,12 +366,12 @@ export default function ServicesView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.categoryName && !formdetails.categoryName ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border:
+                formErrors.categoryName && !formdetails.categoryName ? '1px solid red' : 'none',
+              borderRadius: '8px',
             }}
           />
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your categoryDescription"
             onChange={(e) => {
@@ -399,12 +384,14 @@ export default function ServicesView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.categoryDescription && !formdetails.categoryDescription ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border:
+                formErrors.categoryDescription && !formdetails.categoryDescription
+                  ? '1px solid red'
+                  : 'none',
+              borderRadius: '8px',
             }}
           />
           <TextField
-
             variant="outlined"
             placeholder="Please Enter Your categoryCode"
             onChange={(e) => {
@@ -417,13 +404,19 @@ export default function ServicesView() {
             fullWidth
             height="20px"
             style={{
-              border: formErrors.categoryCode && !formdetails.categoryCode ? "1px solid red" : "none",
-              borderRadius: "8px"
+              border:
+                formErrors.categoryCode && !formdetails.categoryCode ? '1px solid red' : 'none',
+              borderRadius: '8px',
             }}
           />
 
-          <Button fullWidth variant="contained" color="primary" onClick={isEdit ? updateCategoryHandler : addCategoryHandler}>
-            {isEdit ? "Update" : "Add"}
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={isEdit ? updateCategoryHandler : addCategoryHandler}
+          >
+            {isEdit ? 'Update' : 'Add'}
           </Button>
         </Box>
       </Dialog>

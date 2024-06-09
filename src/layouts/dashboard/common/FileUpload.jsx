@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
+import { Tr, Td, Table, Tbody } from "react-super-responsive-table";
+import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+// >>>>>>> 364c2b12b5fafd646b8168667d3fca4a82c411b0
 import {
     Row,
     Col,
     Card,
+    Button,
     CardBody,
-    Container,
-    Button
+    Container
 } from "reactstrap";
-import { Table, Tbody, Tr, Td } from "react-super-responsive-table";
-import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-import { CATEGORY_API } from "src/components/Common/apiConfig";
+
 import api from "src/components/Common/api";
+import { CATEGORY_API } from "src/components/Common/apiConfig";
 
 const FileUpload = ({ userProfileData }) => {
     const [successMessage, setSuccessMessage] = useState("");
@@ -57,28 +60,28 @@ const FileUpload = ({ userProfileData }) => {
                 'Content-Type': 'multipart/form-data'
             }
         })
-        .then(response => {
-            if (response.status === 200) {
-                setSuccessMessage(`${fileType} uploaded successfully.`);
-                setUploadedFiles(prevState => ({
-                    ...prevState,
-                    [`${fileType}Url`]: response.data.filename
-                }));
-            } else {
-                console.error("Unexpected response:", response);
-            }
-        })
-        .catch(error => {
-            if (error.response) {
-                if (error.response.status === 417) {
-                    console.error("Error 417:", error);
-                    setErrorMessage(error.response.data);
-                } else if (error.response.status === 500) {
-                    console.error("Error 500:", error);
-                    setErrorMessage("Something Went Wrong!");
+            .then(response => {
+                if (response.status === 200) {
+                    setSuccessMessage(`${fileType} uploaded successfully.`);
+                    setUploadedFiles(prevState => ({
+                        ...prevState,
+                        [`${fileType}Url`]: response.data.filename
+                    }));
+                } else {
+                    console.error("Unexpected response:", response);
                 }
-            }
-        });
+            })
+            .catch(error => {
+                if (error.response) {
+                    if (error.response.status === 417) {
+                        console.error("Error 417:", error);
+                        setErrorMessage(error.response.data);
+                    } else if (error.response.status === 500) {
+                        console.error("Error 500:", error);
+                        setErrorMessage("Something Went Wrong!");
+                    }
+                }
+            });
     };
 
     const allFilesUploadeHandler = () => {
@@ -107,26 +110,26 @@ const FileUpload = ({ userProfileData }) => {
                 'x-coreplatform-concurrencystamp': userProfileData?.concurrencyStamp
             }
         })
-        .then(response => {
-            if (response.status === 204) {
-                setSuccessMessage("Files uploaded successfully.");
-                window.location.reload()
-                
-            } else {
-                console.error("Unexpected response:", response);
-            }
-        })
-        .catch(error => {
-            if (error.response) {
-                if (error.response.status === 417) {
-                    console.error("Error 417:", error);
-                    setErrorMessage(error.response.data);
-                } else if (error.response.status === 500) {
-                    console.error("Error 500:", error);
-                    setErrorMessage("Something Went Wrong!");
+            .then(response => {
+                if (response.status === 204) {
+                    setSuccessMessage("Files uploaded successfully.");
+                    window.location.reload()
+
+                } else {
+                    console.error("Unexpected response:", response);
                 }
-            }
-        });
+            })
+            .catch(error => {
+                if (error.response) {
+                    if (error.response.status === 417) {
+                        console.error("Error 417:", error);
+                        setErrorMessage(error.response.data);
+                    } else if (error.response.status === 500) {
+                        console.error("Error 500:", error);
+                        setErrorMessage("Something Went Wrong!");
+                    }
+                }
+            });
     };
 
     const clearForm = () => {
@@ -138,9 +141,9 @@ const FileUpload = ({ userProfileData }) => {
     };
 
     return (
-        <React.Fragment>
+        <>
             <div className="page-content">
-                <Container fluid={true}>
+                <Container fluid>
                     <Row>
                         <Col>
                             <Card>
@@ -219,7 +222,7 @@ const FileUpload = ({ userProfileData }) => {
             {successMessage && Object.keys(formErrors).length === 0 && (
                 <div className="success-message">{successMessage}</div>
             )}
-        </React.Fragment>
+        </>
     );
 }
 

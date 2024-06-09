@@ -5,7 +5,6 @@ import {
   Paper,
   AppBar,
   Avatar,
-  Divider,
   Toolbar,
   Container,
   TextField,

@@ -1,7 +1,7 @@
 
-import { Input } from 'reactstrap';
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Input } from 'reactstrap';
+
 const InputField = ({ label, name, value, error, onChange, type = "text", isRequired = false }) => (
   <>
     <td >{isRequired && <span className="mandatory">*</span>}{label}</td>
@@ -30,7 +30,7 @@ export default InputField;
 // )
 export const InputSelect = ({ label, colSpan, name, value, error, onChange, style, options = [], valueKey = 'value', labelKey = 'label', select = false, isRequired = false }) => (
   <>
-    <td >{isRequired && <span className="mandatory">*</span>}{label}</td>
+    <td  style={{font:"21px san-serief"}}>{isRequired && <span className="mandatory" >*</span>}{label}</td>
     <td >
       <select
         name={name}
@@ -39,7 +39,7 @@ export const InputSelect = ({ label, colSpan, name, value, error, onChange, styl
         className={`${error ? 'error-input' : ''}`}
         onChange={onChange}
       >
-        {select && <option value="">Select</option>}
+        {select && <option value="" >Select</option>}
         {options.map(option => (
           <option key={option[valueKey]} value={option[valueKey]}>{option[labelKey]}</option>
         ))}

@@ -1,3 +1,4 @@
+
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
@@ -5,10 +6,6 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'src/routes/hooks';
 
 import AppWidgetSummary from '../app-widget-summary';
-import { useState } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import PropTypes from 'prop-types';
-import view_screens from 'src/components/Common/view_screens';
 
 // ----------------------------------------------------------------------
 

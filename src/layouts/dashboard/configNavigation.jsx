@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import SvgColor from 'src/components/svg-color';
+
 import api from 'src/components/Common/api';
+import SvgColor from 'src/components/svg-color';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
+
 
 const configNavigation = () => {
   const [navConfig, setNavConfig] = useState([]);
@@ -43,21 +45,27 @@ const configNavigation = () => {
             icon: icon('ic_user'),
           },
           ...mappedNavConfig,
+          // {
+          //   title: 'Chat Bot',
+          //   path: '/chat-bot',
+          //   icon: icon('ic_blog'),
+          // },
+          // {
+          //   title: 'Noise cancellation',
+          //   path: '/noise-cancellation',
+          //   icon: icon('ic_disabled'),
+          // },
+          // {
+          //   title: 'User Personas',
+          //   path: '/user-personas',
+          //   icon: icon('ic_notification_chat'),
+          // },
+
           {
-            title: 'Chat Bot',
-            path: '/chat-bot',
-            icon: icon('ic_blog'),
-          },
-          {
-            title: 'Noise cancellation',
-            path: '/noise-cancellation',
-            icon: icon('ic_disabled'),
-          },
-          {
-            title: 'User Personas',
-            path: '/user-personas',
-            icon: icon('ic_notification_chat'),
-          },
+              title: 'Payment-Category',
+              path: '/payment-category',
+              icon: icon('ic_notification_chat'),
+            },
         ];
 
         setNavConfig(newNavConfig);
