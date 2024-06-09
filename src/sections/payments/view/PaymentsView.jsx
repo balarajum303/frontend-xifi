@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -7,7 +8,7 @@ import { Close } from '@mui/icons-material';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
-import { Box, Dialog } from '@mui/material';
+import { Box, Dialog, TextField } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -24,97 +25,127 @@ import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import edit from "../../../../public/assets/images/edit_icon.gif"
+import edit from '../../../../public/assets/images/edit_icon.gif';
 import { InputSelect } from 'src/components/Common/InputField';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function PaymentsView() {
   const [page, setPage] = useState(1);
+
   const [order, setOrder] = useState('asc');
+
   const [selected, setSelected] = useState([]);
   const [getData, setGetData] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
-  const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(50);
-  const [formDetails, setFormDetails] = useState({ usersId: "" });
-  const [formErrors, setFormErrors] = useState({ usersId: "" });
-  const [successMessage, setSuccessMessage] = useState("");
-  const[errorMessage,setErrorMessage]=useState("")
-  const [allUsers, setAllUsers] = useState([]);
-  const path = window.location.pathname;
-  const pathSegments = path.split('/');
-  const selectedPath = pathSegments[1];
-  const selectedPublicId = pathSegments[pathSegments.length - 1];
-  const capitalizedSelectedPath = selectedPath.charAt(0).toUpperCase() + selectedPath.slice(1);
+  const [isEdit, setisEdit] = useState(false);
 
+  const [orderBy, setOrderBy] = useState('name');
+
+  const [filterName, setFilterName] = useState('');
+
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [formdetails, setFormdetails] = useState({
+    categoryId: '',
+    amount: '',
+    status: "active"
+  });
+  const [formErrors, setFormErrors] = useState({
+    categoryId: '',
+    amount: '',
+  });
+  const [successMessage, setSuccessMessage] = useState('');
+  const[errorMessage,setErrorMessage]=useState("")
+
+  const [getServices, setGetServices] = useState([])
+  /////get services////
   useEffect(() => {
-    const getAllUsers = () => {
-      const url = `${CATEGORY_API.GET_USERS}?pageSize=50`;
-      api.get(url)
-        .then(response => {
-          setAllUsers(response.data);
+    const getAllCategory = () => {
+      const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${rowsPerPage}&pageNumber=${page}`;
+      api
+        .get(url)
+        .then((response) => {
+          console.log('get-all category', response);
+          setGetServices(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     };
-    getAllUsers();
+
+    getAllCategory();
   }, [page, rowsPerPage]);
 
-
-
   useEffect(() => {
-    const getAllServices = () => {
-      const url = `${CATEGORY_API.GET_USER_CATEGORY}?pageSize=${rowsPerPage}&pageNumber=${page}`;
-      api.get(url)
-        .then(response => {
+    // /get payment /////
+    const getAllPayments = () => {
+      const url = `${CATEGORY_API.GET_PAYMENT_CATEGORY}`;
+      api
+        .get(url)
+        .then((response) => {
+          console.log('get-all payments', response);
+          // const categories = response.data;
+          // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
+          // setMaxrole(maxrole);
           setGetData(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     };
-    getAllServices();
-  }, [page, rowsPerPage, selectedPublicId]);
+    getAllPayments();
+  }, [rowsPerPage, page]);
 
-  const addCategoryHandler = () => {
+  const addPaymentHandler = () => {
+    // setErrorMessage("");
+
     const errors = {};
-    if (!formDetails.usersId) {
-      errors.usersId = "Please select a user.";
+
+    if (!formdetails.categoryId) {
+      errors.categoryId = 'Please Select Category.';
+    }
+    if (!formdetails.amount) {
+      errors.amount = 'Amount is required.';
+    } else if (!/^\d+$/.test(formdetails.amount)) {
+      errors.amount = 'Amount must be a number.';
     }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      setSuccessMessage("");
+      setSuccessMessage('');
       return;
     }
 
-    setFormErrors({ usersId: "" });
+    setFormErrors({
+      categoryId: '',
+      amount: '',
+    });
+    const url = CATEGORY_API.GET_PAYMENT_CATEGORY;
 
     const reqCategoryBody = {
-      categoryId: selectedPublicId,
-      usersId: formDetails.usersId,
-      status: "active"
+      categoryId: formdetails.categoryId,
+      amount: parseInt(formdetails.amount), // Convert amount to integer before sending
+      status: "active",
     };
 
-    api.post(CATEGORY_API.GET_USER_CATEGORY, reqCategoryBody)
-      .then(response => {
-        if (response.status === 201) {
-          setSuccessMessage("Service added successfully");
+    console.log('payment-post-body-', reqCategoryBody);
+    api
+      .post(url, reqCategoryBody)
+      .then((response) => {
+        if (response) {
+          setSuccessMessage('Payment added successfully');
           window.location.reload();
         } else {
-          console.error("Unexpected response:", response);
+          console.error('Unexpected response:', response);
         }
       })
       .catch(error => {
         if (error.response && error.response.status === 500) {
-          setErrorMessage(error.response.data.details.message || "User Already Exists");
+          setErrorMessage(error.response.data.details.message || "Category Or Amount Already Exists");
         }
         console.log("Error:", error);
       });
-  };
+};
+
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -156,74 +187,78 @@ export default function UserPage() {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setPage(1);
+    setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
   const handleFilterByName = (event) => {
-    setPage(1);
+    setPage(0);
     setFilterName(event.target.value);
   };
-
-  const dataFiltered = getData.filter(item =>
-    {
-      console.log(item, selectedPublicId, "item")
-    return item.user && item.user.name.toLowerCase().includes(filterName.toLowerCase()) && item.categoryId == selectedPublicId
-    }
+  const dataFiltered = getData.filter((item) =>
+    item?.category?.categoryName.toLowerCase().includes(filterName.toLowerCase())
   );
-  console.log(dataFiltered, 'data filete fata')
+
   const notFound = !dataFiltered.length && !!filterName;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
+
 
   const handleClickOpen = (row) => {
-    console.log("row in edit",row)
-    if (row.usersId) {
-      setIsEdit(true);
-      setFormDetails({
+    console.log('row', row);
+    if (row.category?.categoryName) {
+      setisEdit(true);
+      setFormdetails({
         ...row,
-        usersId: row.usersId,
+        amount:row?.amount,
+        categoryId: row.category.publicId,
+        
       });
     } else {
-      setIsEdit(false);
-      setFormDetails({
-        usersId: '',
+      setisEdit(false);
+      setFormdetails({
+        categoryId: '',
+        amount:""
       });
+      // Set isEdit to false when opening dialog for adding new service
     }
+    console.log('isEdit:', isEdit);
     setOpen(true);
   };
 
-  const updateCategoryHandler = () => {
-    const updateCategoryBody = {
-      categoryId: selectedPublicId,
-      usersId: formDetails.usersId,
-    };
-    console.log("updateCategoryBody",updateCategoryBody)
-    console.log("concurrenct stamp in update",formDetails)
+  /// /////----- update----////////////
+  const updatePaymentHandler = () => {
+    console.log('formdetails in update', formdetails);
 
-    const url = `${CATEGORY_API.GET_USER_CATEGORY}/${formDetails.publicId}`;
-    api.patch(url, updateCategoryBody, {
-      headers: {
-        'x-coreplatform-concurrencystamp': formDetails.concurrencyStamp
-      }
-    })
-      .then(response => {
+    const updateCategoryBody = {
+      categoryId: formdetails?.category?.publicId,
+      amount: parseInt(formdetails.amount)
+    };
+    console.log(updateCategoryBody, 'updateCategoryBody');
+    const url = `${CATEGORY_API.GET_PAYMENT_CATEGORY}/${formdetails.publicId}`;
+    api
+      .patch(url, updateCategoryBody, {
+        headers: {
+          'x-coreplatform-concurrencystamp': formdetails.concurrencyStamp,
+        },
+      })
+
+      .then((response) => {
         if (response.status === 204) {
           window.location.reload();
         } else {
-          console.error("Unexpected response:", response);
+          console.error('Unexpected response:', response);
         }
       })
       .catch(error => {
         if (error.response) {
           if (error.response.status === 417) {
-            setErrorMessage(error.response.data.details.message || "User Already Exists");
+            setErrorMessage(error.response.data.details.message || "Category Already Exists");
           } else if (error.response.status === 500) {
-            setErrorMessage(error.response.data.details.message || "User Already Exists");
+            setErrorMessage(error.response.data.details.message || "Amount Or Category  Already Exists");
           }
         }
       });
   };
-  
   const handleClose = () => {
     setOpen(false);
   };
@@ -231,21 +266,15 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">{capitalizedSelectedPath}</Typography>
-        <h6>
-          {successMessage && (
-            <div className="success-message">
-              {successMessage}
-            </div>
-          )}
-        </h6>
+        <Typography variant="h4">Payments</Typography>
+        <h6>{successMessage && <div className="success-message">{successMessage}</div>}</h6>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="eva:plus-fill" />}
           onClick={handleClickOpen}
         >
-          New {capitalizedSelectedPath}
+          New Payment
         </Button>
       </Stack>
 
@@ -268,9 +297,8 @@ export default function UserPage() {
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'Name', label: 'Name' },
-                  { id: 'Email', label: 'Email' },
-                  { id: 'Role', label: 'Role' },
-                  { id: 'Mobile Number', label: 'Mobile Number' },
+                  { id: 'Amount', label: 'Amount' },
+
                   { id: 'status', label: 'Status' },
                   { id: 'Edit', label: 'Edit' },
                   { id: '' },
@@ -281,13 +309,12 @@ export default function UserPage() {
                   // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
-                      key={row?.user?.id}
-                      domain={row?.user?.name}
-                      email={row?.user?.email}
-                      role={row?.user?.role}
-                      mobileNumber={row?.user?.mobileNumber}
+                      key={row.id}
+                      domain={row?.category?.categoryName}
+                      amount={row?.amount}
                       status={row?.status}
                       edit={
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                         <img
                           src={edit}
                           alt="Edit"
@@ -299,7 +326,6 @@ export default function UserPage() {
                       concurrencyStamp={row.concurrencyStamp}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
-                      selectedPath={selectedPath}
                     />
                   ))}
 
@@ -328,24 +354,23 @@ export default function UserPage() {
       <Dialog open={open} onClose={handleClose} sx={{ width: '100vw' }}>
         <Box width="30vw" p={2} display="flex" flexDirection="column" gap={2}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-         
-            <Typography variant="h5">
-              {isEdit ? `Update ${capitalizedSelectedPath}` : `Add New ${capitalizedSelectedPath}`}
-            </Typography>
-           
+            <Typography variant="h5">{isEdit ? 'Update Payment' : 'Add New Payment'}</Typography>
+
             <Close
               sx={{ cursor: 'pointer' }}
-              onClick={handleClose}
+              onClick={() => {
+                handleClose();
+              }}
             />
           </Box>
           <h6>
-              {formErrors.usersId && (
-                <span className="error-message">
-                  {formErrors.usersId}
-                </span>
-              )}
-            </h6>
-            <h6>
+            {formErrors.categoryId && (
+              <span className="error-message">
+                {formErrors.categoryId}
+              </span>
+            )}
+          </h6>
+          <h6>
               {errorMessage && (
                 <span className="error-message">
                   {errorMessage}
@@ -353,24 +378,47 @@ export default function UserPage() {
               )}
             </h6>
           <InputSelect
-            label="Users :"
+            label="Categories :"
             style={{ width: "373px", padding: "8px" }}
+            name="categoryId"
             onChange={(e) => {
-              setFormDetails((prev) => ({
+              setFormdetails((prev) => ({
                 ...prev,
-                usersId: e.target.value,
+                categoryId: e.target.value,
               }));
             }}
-            value={formDetails.usersId}
+            value={formdetails.categoryId}
             valueKey="publicId"
-            labelKey="name"
+            labelKey="categoryName"
             isRequired={true}
             select={true}
-            options={allUsers}
+            options={getServices}
+          />
+          <TextField
+            variant="outlined"
+            placeholder="Please Enter Your amount"
+            value={formdetails?.amount}
+            onChange={(e) => {
+              setFormdetails((prev) => ({
+                ...prev,
+                amount: e.target.value,
+              }));
+            }}
+            fullWidth
+            height="20px"
+            style={{
+              border: formErrors.amount && !formdetails.amount ? '1px solid red' : 'none',
+              borderRadius: '8px',
+            }}
           />
 
-          <Button fullWidth variant="contained" color="primary" onClick={isEdit ? updateCategoryHandler : addCategoryHandler}>
-            {isEdit ? "Update" : "Add"}
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={isEdit ? updatePaymentHandler : addPaymentHandler}
+          >
+            {isEdit ? 'Update' : 'Add'}
           </Button>
         </Box>
       </Dialog>

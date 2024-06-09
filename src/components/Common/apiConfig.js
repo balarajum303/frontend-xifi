@@ -12,7 +12,9 @@ export const CATEGORY_API = {
   GET_USERS:"/users",
   POST_USERS:"/users",
   GET_USER_CATEGORY:"/user-category",
-  STATUS_UPDATE_USER_CATEGORY:"/user-category-status-update"
+  STATUS_UPDATE_USER_CATEGORY:"/user-category-status-update",
+  GET_PAYMENT_CATEGORY:"/payment-category",
+  STATUS_UPDATE_PAYMENT_CATEGORY:"/payment-category-status-update"
 
  
 

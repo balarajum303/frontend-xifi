@@ -120,8 +120,9 @@ export default function UsersView() {
     api
       .post(url, reqCategoryBody)
       .then((response) => {
-        if (response) {
-          setSuccessMessage('service added successfully');
+        console.log(response, "respunse-users")
+        if (response || !response) {
+          setSuccessMessage('users added successfully');
           window.location.reload();
         } else {
           console.error('Unexpected response:', response);

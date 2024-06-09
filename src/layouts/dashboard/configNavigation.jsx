@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import api from 'src/components/Common/api';
 import SvgColor from 'src/components/svg-color';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
-
+import { BsCashCoin } from "react-icons/bs";
 
 const configNavigation = () => {
   const [navConfig, setNavConfig] = useState([]);
@@ -64,7 +64,7 @@ const configNavigation = () => {
           {
               title: 'Payment-Category',
               path: '/payment-category',
-              icon: icon('ic_notification_chat'),
+              icon: <BsCashCoin style={{ width: '22px', height: '22px' }} />,
             },
         ];
 

@@ -11,7 +11,7 @@ export default function servicePage() {
     return (
         <>
             <Helmet>
-                <title> Service </title>
+                <title> Services </title>
             </Helmet>
 
             <ServicesView/>

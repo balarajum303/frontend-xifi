@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
+import { PaymentsView } from 'src/sections/payments/view';
 
-import { UsersView } from 'src/sections/users/view';
 // eslint-disable-next-line import/named
 
 
@@ -11,10 +11,10 @@ export default function userPage() {
     return (
         <>
             <Helmet>
-                <title> Users </title>
+                <title> Payments </title>
             </Helmet>
 
-            <UsersView/>
+            <PaymentsView/>
         </>
     );
 }

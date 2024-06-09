@@ -12,6 +12,7 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const service = lazy(() => import('src/pages/service'));
 export const Users = lazy(() => import('src/pages/Users'));
+export const Payments = lazy(() => import('src/pages/Payments'));
 
 export const EmailPage = lazy(() => import('src/pages/email'));
 export const LoginPage = lazy(() => import('src/pages/login'));
@@ -27,11 +28,11 @@ export default function Router() {
     },
     { path: '/services', element: service },
     { path: '/users', element: Users },
-    { path: '/products', element: ProductsPage },
-    { path: '/blog', element: BlogPage },
-    { path: '/chat-bot', element: ChatbotPage },
-    { path: '/noise-cancellation', element: NoiseCancellationPage },
-    { path: '/user-personas', element: UserPersonasPage },
+    // { path: '/blog', element: BlogPage },
+    // { path: '/chat-bot', element: ChatbotPage },
+    // { path: '/noise-cancellation', element: NoiseCancellationPage },
+    // { path: '/user-personas', element: UserPersonasPage },
+    { path: '/payment-category', element: Payments },
   ]);
 
 
@@ -41,7 +42,7 @@ export default function Router() {
       .then(response => {
         // Create an array of routes from API data
         const apiRoutes = response.data.map(item => ({
-          path: `/${item.categoryName}/${item.publicId}`,
+          path: `/${item.categoryName}/:categoryId`,
           element: EmailPage
         }));
 
