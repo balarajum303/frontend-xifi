@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
 import {
   MDBCol,
   MDBRow,
@@ -53,7 +52,6 @@ export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const [openProfileDialog, setOpenProfileDialog] = useState(false);
   const [userProfileData,setUserProfileData]=useState([])
-  const navigate=useNavigate()
   const handleOpenProfileDialog = () => {
     setOpenProfileDialog(true);
 
@@ -71,6 +69,7 @@ export default function AccountPopover() {
     setOpen(null);
   };
 const logoutHandler=()=>{
+  localStorage.clear()
   window.location.replace(`${window.location.origin}/login`);
   setOpen(null);
 }
@@ -101,9 +100,7 @@ useEffect(()=>{
   getUserProfileData()
 },[])
 
-const handleCancel = () => {
-  navigate(`${window.location.pathname}`); // Navigate one step back in the browser history
-};
+
   return (
     <>
       <IconButton

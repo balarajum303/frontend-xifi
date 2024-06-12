@@ -1,8 +1,6 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Tr, Td, Table, Tbody } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-// >>>>>>> 364c2b12b5fafd646b8168667d3fca4a82c411b0
 import {
     Row,
     Col,
@@ -11,7 +9,7 @@ import {
     CardBody,
     Container
 } from "reactstrap";
-
+import PropTypes from 'prop-types';
 import api from "src/components/Common/api";
 import { CATEGORY_API } from "src/components/Common/apiConfig";
 
@@ -19,10 +17,6 @@ const FileUpload = ({ userProfileData }) => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [formErrors, setFormErrors] = useState({ photo: "", voice: "" });
-    const [files, setFiles] = useState({
-        photo: null,
-        voice: null
-    });
     const [uploadedFiles, setUploadedFiles] = useState({
         photoUrl: "",
         voiceUrl: ""
@@ -30,7 +24,6 @@ const FileUpload = ({ userProfileData }) => {
 
     const handleFileUpload = (e, fileType) => {
         const uploadedFile = e.target.files[0];
-        setFiles(prevFiles => ({ ...prevFiles, [fileType]: uploadedFile }));
         createFileUpload(fileType, uploadedFile);
     };
 
@@ -114,7 +107,6 @@ const FileUpload = ({ userProfileData }) => {
                 if (response.status === 204) {
                     setSuccessMessage("Files uploaded successfully.");
                     window.location.reload()
-
                 } else {
                     console.error("Unexpected response:", response);
                 }
@@ -133,7 +125,6 @@ const FileUpload = ({ userProfileData }) => {
     };
 
     const clearForm = () => {
-        setFiles({ photo: null, voice: null });
         setFormErrors({ photo: "", voice: "" });
         setErrorMessage("");
         setSuccessMessage("");
@@ -225,5 +216,12 @@ const FileUpload = ({ userProfileData }) => {
         </>
     );
 }
+
+FileUpload.propTypes = {
+    userProfileData: PropTypes.shape({
+        name: PropTypes.string,
+        concurrencyStamp: PropTypes.string,
+    }).isRequired,
+};
 
 export default FileUpload;

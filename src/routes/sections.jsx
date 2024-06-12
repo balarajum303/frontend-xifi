@@ -31,7 +31,7 @@ export default function Router() {
     // { path: '/blog', element: BlogPage },
     // { path: '/chat-bot', element: ChatbotPage },
     // { path: '/noise-cancellation', element: NoiseCancellationPage },
-    // { path: '/user-personas', element: UserPersonasPage },
+    { path: '/user-personas', element: UserPersonasPage },
     { path: '/payment-category', element: Payments },
   ]);
 

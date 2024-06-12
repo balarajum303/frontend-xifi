@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { Box, Dialog } from '@mui/material';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import { Close } from '@mui/icons-material';
-import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import { Box, Dialog } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-
-import { users } from 'src/_mock/user';
-
+import Typography from '@mui/material/Typography';
 import api from 'src/components/Common/api';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import { InputSelect } from 'src/components/Common/InputField';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { CATEGORY_API } from 'src/components/Common/apiConfig';
-
-import { emptyRows } from '../utils';
-import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
+import { users } from 'src/_mock/user';
 import TableEmptyRows from '../table-empty-rows';
+import { emptyRows } from '../utils';
+import UserTableHead from '../user-table-head';
+import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
+import TableNoData from '../table-no-data';
+import { Close } from '@mui/icons-material';
 import edit from "../../../../public/assets/images/edit_icon.gif"
-import { InputSelect } from 'src/components/Common/InputField';
 
 // ----------------------------------------------------------------------
 
@@ -168,7 +165,7 @@ export default function UserPage() {
   const dataFiltered = getData.filter(item =>
     {
       console.log(item, selectedPublicId, "item")
-    return item.user && item.user.name.toLowerCase().includes(filterName.toLowerCase()) && item.categoryId == selectedPublicId
+    return item.user && item.user.name.toLowerCase().includes(filterName.toLowerCase()) && item.categoryId === selectedPublicId
     }
   );
   console.log(dataFiltered, 'data filete fata')

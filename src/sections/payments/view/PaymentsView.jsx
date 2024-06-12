@@ -18,15 +18,17 @@ import api from 'src/components/Common/api';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import { InputSelect } from 'src/components/Common/InputField';
 
-import { emptyRows } from '../utils';
 import TableNoData from '../table-no-data';
+import { emptyRows } from '../utils'; 
+import UserTableToolbar from '../user-table-toolbar'; 
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
+
 import edit from '../../../../public/assets/images/edit_icon.gif';
-import { InputSelect } from 'src/components/Common/InputField';
+
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +59,7 @@ export default function PaymentsView() {
   const[errorMessage,setErrorMessage]=useState("")
 
   const [getServices, setGetServices] = useState([])
-  /////get services////
+ 
   useEffect(() => {
     const getAllCategory = () => {
       const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${rowsPerPage}&pageNumber=${page}`;
@@ -123,7 +125,7 @@ export default function PaymentsView() {
 
     const reqCategoryBody = {
       categoryId: formdetails.categoryId,
-      amount: parseInt(formdetails.amount), // Convert amount to integer before sending
+      amount: parseInt(formdetails.amount,10), // Convert amount to integer before sending
       status: "active",
     };
 
@@ -231,7 +233,7 @@ export default function PaymentsView() {
 
     const updateCategoryBody = {
       categoryId: formdetails?.category?.publicId,
-      amount: parseInt(formdetails.amount)
+      amount: parseInt(formdetails.amount,10)
     };
     console.log(updateCategoryBody, 'updateCategoryBody');
     const url = `${CATEGORY_API.GET_PAYMENT_CATEGORY}/${formdetails.publicId}`;
@@ -390,8 +392,8 @@ export default function PaymentsView() {
             value={formdetails.categoryId}
             valueKey="publicId"
             labelKey="categoryName"
-            isRequired={true}
-            select={true}
+            isRequired
+            select
             options={getServices}
           />
           <TextField

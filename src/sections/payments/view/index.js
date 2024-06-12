@@ -1,1 +1,1 @@
-export { default as PaymentsView } from './PaymentsView.jsx';
+export { default as PaymentsView } from './PaymentsView';

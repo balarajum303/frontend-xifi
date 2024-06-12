@@ -19,7 +19,6 @@ const Services = () => {
     })
     const [isEdit, setisEdit] = useState(false)
     const [deleteId, setDelteID] = useState(null)
-    const [filterdata, setFilterdata] = useState([])
     // const [query, setQuery] = useState("")
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
@@ -38,7 +37,7 @@ const Services = () => {
             .then(response => {
                 console.log(response)
                 setAdmissionDetails(response.data)
-                setFilterdata(response.data)
+               
             })
             .catch(error => {
                 console.error(error)
@@ -162,15 +161,15 @@ const Services = () => {
         clearForm()
     }
     /// ////////////////////.....................edit........//////////////////////////////////
-    const getEditEntry = user => {
-        console.log(localStorage.getItem("token"))
-        const url = `${CATEGORY_API.GET_ADMISSION_STATUS_BYID}/${user.id}`
-        api.get(url).then(response => {
-            console.log(response)
-            setFormdetails(response.data)
-            setisEdit(true)
-        })
-    }
+    // const getEditEntry = user => {
+    //     console.log(localStorage.getItem("token"))
+    //     const url = `${CATEGORY_API.GET_ADMISSION_STATUS_BYID}/${user.id}`
+    //     api.get(url).then(response => {
+    //         console.log(response)
+    //         setFormdetails(response.data)
+    //         setisEdit(true)
+    //     })
+    // }
 
     /// /////----- update----////////////
     const updateAdmissionEntry = () => {
@@ -363,10 +362,11 @@ const Services = () => {
                     </Modal.Header>
                     <Modal.Body>Are you sure you want to Delete.</Modal.Body>
                     <Modal.Footer>
-                        <button variant="secondary" onClick={handleClose}>
+                        <button type="button" variant="secondary" onClick={handleClose}>
                             Cancel
                         </button>
                         <button
+                        type="button"
                             variant="danger"
                             onClick={e => {
                                 deleteAdmissionEntry()

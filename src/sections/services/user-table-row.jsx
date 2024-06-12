@@ -16,15 +16,9 @@ import { CATEGORY_API } from 'src/components/Common/apiConfig';
 
 export default function UserTableRow({
   selected,
-  name,
-  avatarUrl,
-  company,
   domain,
-  role,
-  isVerified,
   status,
   email,
-  handleClick,
   publicId,
   concurrencyStamp
 }) {
@@ -120,14 +114,11 @@ console.log("check-ststua ",publicId,concurrencyStamp)
 }
 
 UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
-  handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  email: PropTypes.any,
-  role: PropTypes.any,
   selected: PropTypes.any,
-  status: PropTypes.string,
   domain: PropTypes.string,
+  status: PropTypes.string,
+  email: PropTypes.any,
+  publicId: PropTypes.any, // Add this line
+  concurrencyStamp: PropTypes.any, // Add this line
 };
+

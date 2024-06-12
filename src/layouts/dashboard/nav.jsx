@@ -1,66 +1,55 @@
-import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Drawer from '@mui/material/Drawer';
 import Avatar from '@mui/material/Avatar';
-import { alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
+import { alpha } from '@mui/material/styles';
+
+import Logo from 'src/components/logo';
+import Scrollbar from 'src/components/scrollbar';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import api from 'src/components/Common/api';
 
 import { usePathname } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { account } from 'src/_mock/account';
 
-import Logo from 'src/components/logo';
-import Scrollbar from 'src/components/scrollbar';
-
 import { NAV } from './config-layout';
 import configNavigation from './configNavigation';
-import { CATEGORY_API } from 'src/components/Common/apiConfig';
-import api from 'src/components/Common/api';
-
-// ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
-  const [loginData,setLoginData]=useState([])
-  const navConfig = configNavigation()
+  const [loginData, setLoginData] = useState([]);
+  const navConfig = configNavigation();
   const pathname = usePathname();
-
   const upLg = useResponsive('up', 'lg');
 
   useEffect(() => {
     if (openNav) {
       onCloseNav();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-  /// get user profile/////
+  }, [pathname, openNav, onCloseNav]);
+
   const getUserProfileData = () => {
-    // const urls = `${API_BASE_URL}/${selectedPath}?categoryId=${selectedPublicId}`;
-    // console.log("urls-get",urls)
     const url = `${CATEGORY_API.GET_USER_PROFILE}`;
     api
       .get(url)
       .then(response => {
-        console.log("get user Profile", response.data)
-        // const categories = response.data;
-        // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
-        // setMaxrole(maxrole);
-        setLoginData(response.data)
+        setLoginData(response.data);
       })
       .catch(error => {
-        console.error(error)
-      })
-  }
-  useEffect(()=>{
-    getUserProfileData()
-  },[])
-  
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    getUserProfileData();
+  }, []);
 
   const renderAccount = (
     <Box
@@ -72,14 +61,12 @@ export default function Nav({ openNav, onCloseNav }) {
         display: 'flex',
         borderRadius: 1.5,
         alignItems: 'center',
-        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+        bgcolor: theme => alpha(theme.palette.grey[500], 0.12),
       }}
     >
       <Avatar src={account.photoURL} alt="photoURL" />
-
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2">{loginData.name}</Typography>
-
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
         </Typography>
@@ -89,9 +76,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-
-
-      {navConfig.map((item) => (
+      {navConfig.map(item => (
         <NavItem key={item.title} item={item} />
       ))}
     </Stack>
@@ -105,23 +90,6 @@ export default function Nav({ openNav, onCloseNav }) {
           src="/assets/illustrations/illustration_avatar.png"
           sx={{ width: 100, position: 'absolute', top: -50 }}
         />
-
-        {/* <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6">Get more?</Typography>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-            From only $69
-          </Typography>
-        </Box> */}
-
-        {/* <Button
-          href="https://material-ui.com/store/items/minimal-dashboard/"
-          target="_blank"
-          variant="contained"
-          color="inherit"
-        >
-          Upgrade to Pro
-        </Button> */}
       </Stack>
     </Box>
   );
@@ -138,13 +106,9 @@ export default function Nav({ openNav, onCloseNav }) {
       }}
     >
       <Logo sx={{ mt: 3, ml: 4 }} />
-
       {renderAccount}
-
       {renderMenu}
-
       <Box sx={{ flexGrow: 1 }} />
-
       {renderUpgrade}
     </Scrollbar>
   );
@@ -162,7 +126,7 @@ export default function Nav({ openNav, onCloseNav }) {
             height: 1,
             position: 'fixed',
             width: NAV.WIDTH,
-            borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
+            borderRight: theme => `dashed 1px ${theme.palette.divider}`,
           }}
         >
           {renderContent}
@@ -193,7 +157,6 @@ Nav.propTypes = {
 
 function NavItem({ item }) {
   const pathname = usePathname();
-
   const active = item.path === pathname;
 
   return (
@@ -210,9 +173,9 @@ function NavItem({ item }) {
         ...(active && {
           color: 'primary.main',
           fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+          bgcolor: theme => alpha(theme.palette.primary.main, 0.08),
           '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+            bgcolor: theme => alpha(theme.palette.primary.main, 0.16),
           },
         }),
       }}
@@ -220,8 +183,7 @@ function NavItem({ item }) {
       <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
         {item.icon}
       </Box>
-
-      <Box component="span">{item.title} </Box>
+      <Box component="span">{item.title}</Box>
     </ListItemButton>
   );
 }

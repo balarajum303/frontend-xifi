@@ -29,7 +29,7 @@ export default function LoginView() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState([])
   const [password, setPassword] = useState([])
-  const [successMessage, setSuccessMessage] = useState("");
+  // const [successMessage, setSuccessMessage] = useState("");
   const [formErrors, setFormErrors] = useState({
     email: "",
     password: ""
@@ -57,7 +57,7 @@ export default function LoginView() {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      setSuccessMessage("");
+      // setSuccessMessage("");
       return;
     }
 
@@ -90,11 +90,22 @@ export default function LoginView() {
 
   const renderForm = (
     <>
+      <h6>
+        {formErrors.email && (
+          <span className="error-message">{formErrors.email}</span>
+        )}
+        </h6>
+        <h6>
+        {formErrors.password && (
+          <span className="error-message">{formErrors.password}</span>
+        )}
+      </h6>
       <Stack spacing={3}>
-        <TextField name="email" value={email} onChange={(e) => setEmail(e.target.value)} label="Email address" />
+        <TextField name="email" className={`${formErrors.email ? "error-input" : ""}`} value={email} onChange={(e) => setEmail(e.target.value)} label="Email address" />
 
         <TextField
           name="password"
+          className={`${formErrors.password ? "error-input" : ""}`}
           label="Password"
           value={password} onChange={(e) => setPassword(e.target.value)}
           type={showPassword ? 'text' : 'password'}
@@ -165,7 +176,7 @@ export default function LoginView() {
               Get started
             </Link>
           </Typography>
-          <h6>{errorMessage && <div style={{color:"red",fontSize:"15px"}}>{errorMessage}</div>}</h6>
+          <h6>{errorMessage && <div style={{ color: "red", fontSize: "15px" }}>{errorMessage}</div>}</h6>
           {/* <Stack direction="row" spacing={2}>
             <Button
               fullWidth

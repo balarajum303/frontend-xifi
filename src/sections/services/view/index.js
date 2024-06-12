@@ -1,1 +1,1 @@
-export { default as ServicesView } from './ServicesView.jsx';
+export { default as ServicesView } from './ServicesView';

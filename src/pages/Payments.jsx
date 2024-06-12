@@ -1,7 +1,8 @@
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
+
 import { PaymentsView } from 'src/sections/payments/view';
 
-// eslint-disable-next-line import/named
 
 
 
