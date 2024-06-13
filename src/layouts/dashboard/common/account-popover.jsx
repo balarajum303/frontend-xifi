@@ -256,7 +256,7 @@ useEffect(()=>{
         </MDBRow>
 
         <MDBRow style={{ width: "97.5%", marginLeft: "-23px" }}>
-          <FileUpload userProfileData={userProfileData} />
+          <FileUpload  />
         </MDBRow>
 
         

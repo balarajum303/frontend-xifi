@@ -8,6 +8,7 @@ import api from 'src/components/Common/api';
 import { useRouter } from 'src/routes/hooks';
 
 export default function UserPersonas() {
+  const [emailErr, setEmailErr] = useState("")
   const [audioURL, setAudioURL] = useState('');
   const [audioBlob, setAudioBlob] = useState(null);
   const [voice, setVoice] = useState(null);
@@ -22,23 +23,36 @@ export default function UserPersonas() {
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [getData, setGetData] = useState([]);
   const voiceFileInputRef = useRef(null);
   const imageFileInputRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(0);
   const router = useRouter();
+
+  /////get users///
+  const getAllUsers = () => {
+    const url = `${CATEGORY_API.GET_USERS}?pageSize=${50}`;
+    api
+      .get(url)
+      .then((response) => {
+        console.log('get-all users', response);
+        setGetData(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  useEffect(() => {
+    getAllUsers();
+  }, [])
   /// Get User Profile /////
   const getUserProfileData = () => {
-    // const urls = `${API_BASE_URL}/${selectedPath}?categoryId=${selectedPublicId}`;
-    // console.log("urls-get",urls)
     const url = `${CATEGORY_API.GET_USER_PROFILE}`;
     api
       .get(url)
       .then(response => {
         console.log("get user Profile", response.data)
-        // const categories = response.data;
-        // const maxrole = Math.max(...categories.map(category => parseInt(category.role)), 0); // Find max category code
-        // setMaxrole(maxrole);
         setUserProfileData(response.data)
       })
       .catch(error => {
@@ -64,23 +78,11 @@ export default function UserPersonas() {
     setTimer(0);
   };
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadAudio = () => {
     if (!audioBlob) return;
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([600, 400]);
-    const { width, height } = page.getSize();
-    const textSize = 24;
-
-    const audioBytes = await audioBlob.arrayBuffer();
-    await pdfDoc.attach(audioBytes, 'recording.wav', { mimeType: 'audio/wav', description: 'User recording' });
-
-    page.drawText('Your recorded audio is embedded in this PDF.', { x: 50, y: height - 4 * textSize, size: textSize });
-
-    const pdfBytes = await pdfDoc.save();
-    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(pdfBlob);
-    link.download = 'recording.pdf';
+    link.href = URL.createObjectURL(audioBlob);
+    link.download = 'recording.wav';
     link.click();
   };
 
@@ -132,15 +134,15 @@ export default function UserPersonas() {
         if (error.response) {
           if (error.response.status === 417) {
             console.error("Error 417:", error);
-            setErrorMessage(error.response.data);
+            //setErrorMessage(error.response.data);
           } else if (error.response.status === 500) {
             console.error("Error 500:", error);
-            setErrorMessage("Something Went Wrong!");
+            // setErrorMessage("Something Went Wrong!");
           }
         }
       });
   };
-  const allFilesUploadeHandler = () => {
+  const allFilesUploadedHandler = () => {
     const errors = {};
     setErrorMessage("");
 
@@ -168,8 +170,10 @@ export default function UserPersonas() {
     })
       .then(response => {
         if (response.status === 204) {
-          setSuccessMessage("Files uploaded successfully.");
           setOpen(!open)
+          setSuccessMessage("Files uploaded successfully.");
+
+
 
         } else {
           console.error("Unexpected response:", response);
@@ -177,15 +181,29 @@ export default function UserPersonas() {
       })
       .catch(error => {
         if (error.response) {
+          // setOpen(!open)
+          setErrorMessage("you uploaded existing files");
+          setSuccessMessage("")
+
           if (error.response.status === 417) {
             console.error("Error 417:", error);
-            setErrorMessage(error.response.data);
+
+
           } else if (error.response.status === 500) {
             console.error("Error 500:", error);
             setErrorMessage("Something Went Wrong!");
           }
         }
       });
+  };
+  const handleClick = () => {
+    const emailExists = getData.some(item => item.email === formData.email);
+    if (emailExists) {
+      setOpen(!open);
+      setEmailErr('');  // Clear the error message if the condition is true
+    } else {
+      setEmailErr('Email not found');
+    }
   };
   return (
     <Container maxWidth="xl">
@@ -197,6 +215,9 @@ export default function UserPersonas() {
             </div>
           )}
         </h6>
+        <h6> {emailErr && (
+          <Typography color="error">{emailErr}</Typography>
+        )}</h6>
         <TextField
           label="Email"
           variant="outlined"
@@ -204,13 +225,17 @@ export default function UserPersonas() {
           onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
           value={formData.email}
         />
-        <Button
-          sx={{ width: '20%' }}
-          variant="outlined"
-          onClick={() => formData.email !== '' && setOpen(!open)}
-        >
-          Submit
-        </Button>
+        <div>
+          <Button
+            sx={{ width: '20%' }}
+            variant="outlined"
+            onClick={handleClick}
+          >
+            Submit
+          </Button>
+
+        </div>
+
       </Box>
       {open && (
         <Box>
@@ -226,7 +251,7 @@ export default function UserPersonas() {
             textAlign="start"
             p="8px"
           >
-            <Typography fontWeight={600}>{`Email ${formData.email} is verified`}</Typography>
+            <Typography fontWeight={600}>{` ${formData.email} is verified`}</Typography>
           </Box>
           <Box mt={2} display="flex" flexDirection="column" gap={2} width="50%">
             <Typography variant="h3">Record Your Voice</Typography>
@@ -253,7 +278,7 @@ export default function UserPersonas() {
               </Button>
             </Box>
             <div>
-              <ReactMic record={isRecording} onStop={handleAudioData} className="sound-wave" strokeColor="#000000" backgroundColor="rgba(55, 155, 155, 0.5)" width="503px" />
+              <ReactMic record={isRecording} onStop={handleAudioData} className="sound-wave" strokeColor="#000000" backgroundColor="rgba(55, 155, 155, 0.5)" />
               <Button style={{ backgroundColor: "silver" }} onClick={() => setIsRecording(!isRecording)} color={isRecording ? 'error' : 'success'} >
                 {isRecording ? 'Stop Recording' : 'Start Recording'}
               </Button>
@@ -265,8 +290,8 @@ export default function UserPersonas() {
                     <source src={audioURL} type="audio/wav" />
                     Your browser does not support the audio element.
                   </audio>
-                  <Button variant="contained" color="primary" onClick={handleDownloadPDF}>
-                    Download as PDF
+                  <Button variant="contained" color="primary" onClick={handleDownloadAudio} style={{ marginTop: '10px' }}>
+                    Download Recording
                   </Button>
                 </div>
               )}
@@ -296,6 +321,7 @@ export default function UserPersonas() {
                     onClick={() => voiceFileInputRef.current.click()}
                   >
                     <input
+                      accept="audio/*"
                       type="file"
                       onChange={(e) => handleVoiceFileChange(e, 'voice')}
                       ref={voiceFileInputRef}
@@ -386,17 +412,23 @@ export default function UserPersonas() {
             </div>
 
           </nav>
-
+          <h6>
+            {errorMessage && (
+              <div className="error-message">
+                {errorMessage}
+              </div>
+            )}
+          </h6>
           <div style={{ width: "50%", display: "flex", flexDirection: "row", justifyContent: "center", margin: "33px 23px" }}>
             <Button
               variant="contained"
               color="error"
               style={{ marginRight: '10px' }}
-              onClick={()=>setOpen(!open)}
+              onClick={() => setOpen(!open)}
             >
               Back
             </Button>
-            <Button variant="contained" style={{ marginRight: '5px' }} onClick={allFilesUploadeHandler}>
+            <Button variant="contained" style={{ marginRight: '5px' }} onClick={allFilesUploadedHandler}>
               Submit
             </Button>
           </div>

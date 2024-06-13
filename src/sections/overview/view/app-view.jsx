@@ -6,11 +6,14 @@ import Typography from '@mui/material/Typography';
 import { useRouter } from 'src/routes/hooks';
 
 import AppWidgetSummary from '../app-widget-summary';
+import { useEffect, useState } from 'react';
+import { CATEGORY_API } from 'src/components/Common/apiConfig';
+import api from 'src/components/Common/api';
 
 // ----------------------------------------------------------------------
 
 export default function AppView() {
-
+const [dashBoardCount,setDashBoardCount]=useState([])
   const router = useRouter();
   // const opentab = () => {
    
@@ -24,6 +27,23 @@ export default function AppView() {
   //   )
     
   // }
+
+  /////get DashBoard///
+  const getDashBoardHandler = () => {
+    const url = CATEGORY_API.GET_DASHBOARD
+    api
+      .get(url)
+      .then((response) => {
+        console.log('get-all users', response);
+        setDashBoardCount(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  useEffect(() => {
+    getDashBoardHandler();
+  }, [])
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -34,20 +54,20 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Emails"
-            total={234}
+            total={dashBoardCount?.emailCount}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
-            onClick={() => router.push('/email')}
+            // onClick={() => router.push('/email')}
           />
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Chat bot"
-            total={1352831}
+            total={dashBoardCount?.chatBotCount}
             color="Noise cancellation"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
-            onClick={() => router.push('/chat-bot')}
+            // onClick={() => router.push('/chat-bot')}
 
           />
         </Grid>
@@ -55,10 +75,10 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Noise cancellation"
-            total={1723315}
+            total={dashBoardCount?.noiseUserCount}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
-            onClick={() => router.push('/noise-cancellation')}
+            // onClick={() => router.push('/noise-cancellation')}
 
           />
         </Grid>
