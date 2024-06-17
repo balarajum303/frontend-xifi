@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CATEGORY_API } from '../Common/apiConfig';
 import api from '../Common/api';
 
@@ -7,57 +7,18 @@ const VideoPlayer = ({ open, handleClose, messages }) => {
   const [userProfileData, setUserProfileData] = useState({});
   const [autoplay, setAutoplay] = useState(false);
 
-  const videoRef = useRef(null);
-
-  const videoContainerStyle = {
-    position: 'fixed',
-    top: '15%',
-    left: '63%',
-    transform: 'translate(-50%, -50%)',
-    width: '133px',
-    height: '133px',
-    borderRadius: '50%',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#add8e6',
-    zIndex: 1000,
-  };
-
-  const videoStyle = {
-    width: '100%',
-    height: '100%',
-    borderRadius: '50%',
-  };
-
-  const closeIconStyle = {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    width: '24px',
-    height: '24px',
-    cursor: 'pointer',
-    color: 'white',
-    zIndex: 1001,
-  };
-
-  // Function to fetch user profile data
-  const getUserProfileData = () => {
-    const url = `${CATEGORY_API.GET_USER_PROFILE}`;
-    api
-      .get(url)
-      .then(response => {
-        console.log("get user Profile in chatbot", response.data);
-        setUserProfileData(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
   // Fetch user profile data on component mount
   useEffect(() => {
+    const getUserProfileData = async () => {
+      try {
+        const url = `${CATEGORY_API.GET_USER_PROFILE}`;
+        const response = await api.get(url);
+        setUserProfileData(response.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
     getUserProfileData();
   }, []);
 
@@ -90,11 +51,6 @@ const VideoPlayer = ({ open, handleClose, messages }) => {
       const videoUrl = URL.createObjectURL(videoBlob);
       setVideoSrc(videoUrl);
 
-      // Autoplay the video if a bot message is received
-      if (messages.some(message => message.sender === 'bot')) {
-        setAutoplay(true);
-      }
-
     } catch (error) {
       console.error('Error generating video:', error);
     }
@@ -109,25 +65,40 @@ const VideoPlayer = ({ open, handleClose, messages }) => {
 
   // Autoplay video when autoplay state changes
   useEffect(() => {
-    if (autoplay && videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.error('Error playing video:', error);
-      });
+    if (messages.some(message => message.sender === 'bot')) {
+      setAutoplay(true);
     }
-  }, [autoplay]);
-
-  // Reset autoplay state after video finishes playing
-  const handleVideoEnded = () => {
-    setAutoplay(false);
-  };
+  }, [messages]);
 
   if (!open) {
     return null;
   }
 
+  const videoContainerStyle = {
+    position: 'fixed',
+    top: '15%',
+    left: '63%',
+    transform: 'translate(-50%, -50%)',
+    width: '133px',
+    height: '133px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#add8e6',
+    zIndex: 1000,
+  };
+
+  const videoStyle = {
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+  };
+
   return (
     <div style={videoContainerStyle}>
-      <video ref={videoRef} src={videoSrc} controls autoPlay={false} onEnded={handleVideoEnded} style={videoStyle} />
+      <video src={videoSrc} controls autoPlay={autoplay} style={videoStyle} />
     </div>
   );
 };
