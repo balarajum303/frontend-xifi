@@ -45,7 +45,7 @@ export default function PaymentsView() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [formdetails, setFormdetails] = useState({
     categoryId: '',
     amount: '',
@@ -308,7 +308,7 @@ export default function PaymentsView() {
               />
               <TableBody>
                 {dataFiltered
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
                       key={row.id}

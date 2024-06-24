@@ -14,13 +14,14 @@ const FileUpload = () => {
     });
 
     // Define the base URL where your files are hosted
-    const BASE_URL = "https://your-hosted-files-base-url/";
+    // const BASE_URL = "https://your-hosted-files-base-url/";
 
     // Get User Profile Data
     const getUserProfileData = () => {
         const url = `${CATEGORY_API.GET_USER_PROFILE}`;
         api.get(url)
             .then(response => {
+                console.log("user-profile get in userProfile page",response.data)
                 setUserProfileData(response.data);
             })
             .catch(error => {
@@ -46,7 +47,7 @@ const FileUpload = () => {
                         <Card>
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '18px' }}>
                                 <Card style={{ border: 'none' }}>
-                                    <CardBody style={{ padding: '10px', border: '1px solid silver', borderRadius: '33px',boxShadow:"1px 1px 1px 1px silver" }}>
+                                    <CardBody style={{ padding: '10px', border: '1px solid silver', borderRadius: '33px', boxShadow: "1px 1px 1px 1px silver" }}>
                                         <Typography variant="h6" align="center">
                                             Click on a voice to hear it
                                         </Typography>
@@ -54,7 +55,7 @@ const FileUpload = () => {
                                 </Card>
                             </div>
                             <CardBody>
-                                <div className="table-rep-plugin" style={{marginTop:"18px"}}>
+                                <div className="table-rep-plugin" style={{ marginTop: "18px" }}>
 
                                     <div className="table-responsive mb-0" data-pattern="priority-columns">
 
@@ -62,7 +63,7 @@ const FileUpload = () => {
                                         <div>
                                             {userProfileData.profileUrl && (
                                                 <img
-                                                    src={`${BASE_URL}${userProfileData.profileUrl}`}
+                                                    src={userProfileData.profileUrl}
                                                     alt="Profile"
                                                     style={{ maxWidth: '100%' }}
 
@@ -70,7 +71,7 @@ const FileUpload = () => {
                                             )}
                                             {userProfileData.voiceUrl && (
                                                 <audio controls>
-                                                    <source src={`${BASE_URL}${userProfileData.voiceUrl}`} type="audio/mpeg" />
+                                                    <source src={userProfileData.voiceUrl} type="audio/mpeg" />
                                                     Your browser does not support the audio element.
                                                 </audio>
                                             )}
@@ -78,7 +79,7 @@ const FileUpload = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex justify-content-center gap-3">
-                                    <Button color="danger" onClick={clearForm} className="me-2" style={{marginTop:"18px"}}>
+                                    <Button color="danger" onClick={clearForm} className="me-2" style={{ marginTop: "18px" }}>
                                         Cancel
                                     </Button>
                                 </div>

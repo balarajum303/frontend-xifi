@@ -124,7 +124,7 @@ export default function UserPersonas() {
           setSuccessMessage(`${fileType} uploaded successfully.`);
           setUploadedFiles(prevState => ({
             ...prevState,
-            [`${fileType}Url`]: response.data.filename
+            [`${fileType}Url`]: response.data.filePath
           }));
         } else {
           console.error("Unexpected response:", response);
@@ -414,7 +414,7 @@ export default function UserPersonas() {
           </nav>
           <h6>
             {errorMessage && (
-              <div className="error-message">
+              <div className="error-message" style={{position:"relative",top:"18px",left:"13px",fontSize:"23px"}}>
                 {errorMessage}
               </div>
             )}

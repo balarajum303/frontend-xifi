@@ -43,7 +43,7 @@ export default function ServicesView() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [formdetails, setFormdetails] = useState({
     categoryName: '',
     categoryDescription: '',
@@ -295,8 +295,8 @@ export default function ServicesView() {
                 ]}
               />
               <TableBody>
-                {getData
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                {dataFiltered
+                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
                       key={row.id}

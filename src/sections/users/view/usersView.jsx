@@ -42,7 +42,7 @@ export default function UsersView() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [formdetails, setFormdetails] = useState({
     name: '',
     email: '',
@@ -120,8 +120,10 @@ export default function UsersView() {
     api
       .post(url, reqCategoryBody)
       .then((response) => {
+
         console.log(response, "respunse-users")
-        if (response || !response) {
+        if (response.status === "201" || !response) {
+          getAllUsers()
           setSuccessMessage('users added successfully');
           window.location.reload();
         } else {
@@ -295,7 +297,7 @@ export default function UsersView() {
               />
               <TableBody>
                 {dataFiltered
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
                       key={row.id}

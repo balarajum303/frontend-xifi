@@ -34,7 +34,7 @@ export default function UserPage() {
   const [isEdit, setIsEdit] = useState(false);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(50);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [formDetails, setFormDetails] = useState({ usersId: "" });
   const [formErrors, setFormErrors] = useState({ usersId: "" });
   const [successMessage, setSuccessMessage] = useState("");
@@ -153,19 +153,19 @@ export default function UserPage() {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setPage(1);
+    setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
   const handleFilterByName = (event) => {
-    setPage(1);
+    setPage(0);
     setFilterName(event.target.value);
   };
 
   const dataFiltered = getData.filter(item =>
     {
       console.log(item, selectedPublicId, "item")
-    return item.user && item.user.name.toLowerCase().includes(filterName.toLowerCase()) && item.categoryId === selectedPublicId
+    return item.user && item.user.name.toLowerCase().includes(filterName.toLowerCase()) && item?.category?.publicId === selectedPublicId
     }
   );
   console.log(dataFiltered, 'data filete fata')
@@ -275,7 +275,7 @@ export default function UserPage() {
               />
               <TableBody>
                 {dataFiltered
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
                       key={row?.user?.id}
