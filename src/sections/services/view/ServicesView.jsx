@@ -30,7 +30,7 @@ import edit from '../../../../public/assets/images/edit_icon.gif';
 // ----------------------------------------------------------------------
 
 export default function ServicesView() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
 
@@ -56,12 +56,12 @@ export default function ServicesView() {
   });
   const [successMessage, setSuccessMessage] = useState('');
 
-  // /get category /////ro
+  // /get category /////
  
 
   useEffect(() => {
      const getAllCategory = () => {
-       const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${rowsPerPage}&pageNumber=${page}`;
+       const url = `${CATEGORY_API.GET_CATEGORY}`;
        api
          .get(url)
          .then((response) => {
@@ -77,7 +77,7 @@ export default function ServicesView() {
      };
   
     getAllCategory();
-  }, [page, rowsPerPage]);
+  }, []);
 
   console.log(getData, 'get Data');
 
@@ -335,7 +335,7 @@ export default function ServicesView() {
           count={users.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[10, 20, 50, 100]}
+          rowsPerPageOptions={[5,10, 20, 50, 100]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

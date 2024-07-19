@@ -27,7 +27,7 @@ import edit from "../../../../public/assets/images/edit_icon.gif"
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [getData, setGetData] = useState([]);
@@ -64,7 +64,7 @@ export default function UserPage() {
 
   useEffect(() => {
     const getAllServices = () => {
-      const url = `${CATEGORY_API.GET_USER_CATEGORY}?pageSize=${rowsPerPage}&pageNumber=${page}`;
+      const url = `${CATEGORY_API.GET_USER_CATEGORY}`;
       api.get(url)
         .then(response => {
           setGetData(response.data);
@@ -317,7 +317,7 @@ export default function UserPage() {
           count={users.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
-          rowsPerPageOptions={[10, 20, 50]}
+          rowsPerPageOptions={[5,10, 20, 50, 100]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>

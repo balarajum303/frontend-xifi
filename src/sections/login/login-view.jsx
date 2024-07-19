@@ -18,6 +18,7 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import api from 'src/components/Common/apiConfig';
 
 // ----------------------------------------------------------------------
 
@@ -35,12 +36,6 @@ export default function LoginView() {
     password: ""
   });
   const [errorMessage, setErrorMessage] = useState("");
-
-
-  // const dataclick = () => {
-  //   localStorage.setItem('token','1234')
-  //   router.push('/');
-  // };
   const handleClick = (e) => {
     e.preventDefault();
     setErrorMessage("");
@@ -65,7 +60,7 @@ export default function LoginView() {
       email: "",
       password: ""
     });
-    axios.post("http://localhost:3000/login", {
+    api.post("/login", {
       email,
       password
     })

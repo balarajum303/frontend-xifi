@@ -33,7 +33,7 @@ import edit from '../../../../public/assets/images/edit_icon.gif';
 // ----------------------------------------------------------------------
 
 export default function PaymentsView() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
 

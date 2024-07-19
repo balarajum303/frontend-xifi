@@ -60,7 +60,8 @@
     "react-strap": "^0.0.1",
     "react-super-responsive-table": "^5.2.3",
     "reactstrap": "^9.2.2",
-    "simplebar-react": "^3.2.4"
+    "simplebar-react": "^3.2.4",
+    "styled-components": "^6.1.11"
   },
   "devDependencies": {
     "@vitejs/plugin-react-swc": "^3.4.0",

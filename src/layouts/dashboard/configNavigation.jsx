@@ -7,12 +7,17 @@ import { CATEGORY_API } from 'src/components/Common/apiConfig';
 const ConfigNavigation = () => {
   const [navConfig, setNavConfig] = useState([]);
 
+
+ 
+
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const url = `${CATEGORY_API.GET_CATEGORY}?pageSize=${500}`;
         const response = await api.get(url);
         const categories = response.data;
+        console.log("categories---get",response)
         const mappedNavConfig = categories
           .filter(category => category.status === 'active') // Filter active categories
           .map(category => ({

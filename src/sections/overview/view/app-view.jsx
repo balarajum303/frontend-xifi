@@ -2,32 +2,19 @@
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-
 import { useRouter } from 'src/routes/hooks';
-
 import AppWidgetSummary from '../app-widget-summary';
 import { useEffect, useState } from 'react';
 import { CATEGORY_API } from 'src/components/Common/apiConfig';
 import api from 'src/components/Common/api';
+import AppWebsiteVisits from '../app-website-visits';
+import AppCurrentVisits from '../app-current-visits';
 
 // ----------------------------------------------------------------------
 
 export default function AppView() {
 const [dashBoardCount,setDashBoardCount]=useState([])
   const router = useRouter();
-  // const opentab = () => {
-   
-
-  //   const url = view_screens.SERVICES_DETAIL_VIEW
-
-  //   window.open(
-  //     url,
-  //     "popUpWindow",
-  //     "height=600,width=1100,left=160,top=50,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
-  //   )
-    
-  // }
-
   /////get DashBoard///
   const getDashBoardHandler = () => {
     const url = CATEGORY_API.GET_DASHBOARD
@@ -45,6 +32,7 @@ const [dashBoardCount,setDashBoardCount]=useState([])
     getDashBoardHandler();
   }, [])
   return (
+    <>
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
         Hi, Welcome back 👋
@@ -83,7 +71,7 @@ const [dashBoardCount,setDashBoardCount]=useState([])
           />
         </Grid>
 
-        {/* <Grid xs={12} md={6} lg={8}>
+        <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
             title="Website Visits"
             subheader="(+43%) than last year"
@@ -123,9 +111,9 @@ const [dashBoardCount,setDashBoardCount]=useState([])
               ],
             }}
           />
-        </Grid> */}
+        </Grid>
 
-        {/* <Grid xs={12} md={6} lg={4}>
+        <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
             title="Current Visits"
             chart={{
@@ -137,7 +125,7 @@ const [dashBoardCount,setDashBoardCount]=useState([])
               ],
             }}
           />
-        </Grid> */}
+        </Grid>
 
         {/* <Grid xs={12} md={6} lg={8}>
           <AppConversionRates
@@ -250,5 +238,7 @@ const [dashBoardCount,setDashBoardCount]=useState([])
       </Grid>
 
     </Container>
+    
+    </>
   );
 }

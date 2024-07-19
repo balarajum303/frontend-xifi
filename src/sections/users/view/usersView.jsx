@@ -30,7 +30,7 @@ import edit from '../../../../public/assets/images/edit_icon.gif';
 // ----------------------------------------------------------------------
 
 export default function UsersView() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
 
@@ -120,10 +120,8 @@ export default function UsersView() {
     api
       .post(url, reqCategoryBody)
       .then((response) => {
-
-        console.log(response, "respunse-users")
-        if (response.status === "201" || !response) {
-          getAllUsers()
+        if (response.status === "201") {
+          // getAllUsers()
           setSuccessMessage('users added successfully');
           window.location.reload();
         } else {
@@ -131,7 +129,13 @@ export default function UsersView() {
         }
       })
       .catch((error) => {
-        console.log('err', error);
+        if (error.response) {
+          if (error.response.status === 417) {
+            console.error('Error 417:', error);
+          } else if (error.response.status === 500) {
+            console.error('Error 500:', error);
+          }
+        }
       });
   };
 
